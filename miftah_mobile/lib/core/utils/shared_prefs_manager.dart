@@ -35,4 +35,7 @@ class SharedPrefsManager {
     await _prefs?.remove(keyUserId);
     await _prefs?.remove(keyUserName);
   }
+
+  static Future<void> setBool(String key, bool value) async => await _prefs?.setBool(key, value);
+  static bool? getBool(String key) => _prefs?.getBool(key);
 }

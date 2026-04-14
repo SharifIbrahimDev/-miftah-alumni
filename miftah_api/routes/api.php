@@ -34,13 +34,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/monthly-contributions', [ContributionController::class, 'store']);
         Route::put('/monthly-contributions/{monthlyContribution}', [ContributionController::class, 'update']);
         
-        Route::get('/projects', [ProjectController::class, 'index']);
-        Route::post('/projects', [ProjectController::class, 'store']);
-        Route::post('/project-contributions', [ProjectController::class, 'recordContribution']);
-        
         Route::get('/transactions', [TransactionController::class, 'index']);
         Route::post('/transactions', [TransactionController::class, 'store']);
+        Route::post('/projects', [ProjectController::class, 'store']);
     });
+
+    // Project routes accessible by all members
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::post('/project-contributions', [ProjectController::class, 'recordContribution']);
 
     // Member routes
     Route::get('/my-contributions', [ContributionController::class, 'myContributions'])->middleware('role:member,president');

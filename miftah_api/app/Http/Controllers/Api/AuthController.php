@@ -17,6 +17,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string',
+            'gender' => 'required|string|in:male,female',
             'password' => 'required|string|min:6',
         ]);
 
@@ -24,6 +25,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'gender' => $request->gender,
             'password' => Hash::make($request->password),
             'role' => 'member', // Default role
         ]);
@@ -74,6 +76,7 @@ class AuthController extends Controller
             'name' => 'sometimes|string|max:255',
             'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => 'nullable|string',
+            'gender' => 'sometimes|string|in:male,female',
             'old_password' => 'required_with:password',
             'password' => 'nullable|string|min:6|confirmed',
         ]);
@@ -87,7 +90,7 @@ class AuthController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        $user->fill($request->only(['name', 'email', 'phone']));
+        $user->fill($request->only(['name', 'email', 'phone', 'gender']));
         $user->save();
 
         return response()->json($user);

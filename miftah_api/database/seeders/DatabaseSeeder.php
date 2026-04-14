@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'president@miftah.org',
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'role' => 'president',
+            'gender' => 'male',
         ]);
     }
 }

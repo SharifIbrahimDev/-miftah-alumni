@@ -12,10 +12,13 @@ import 'presentation/providers/contribution_provider.dart';
 import 'presentation/providers/project_provider.dart';
 import 'presentation/providers/user_provider.dart';
 import 'presentation/screens/splash/splash_screen.dart';
+import 'core/services/notification_service.dart';
+import 'core/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefsManager.init();
+  await NotificationService.initialize();
 
   final remoteDataSource = RemoteDataSource();
   final authRepository = AuthRepositoryImpl(remoteDataSource: remoteDataSource);
@@ -38,6 +41,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => UserProvider(repo: userRepository),
         ),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
       ],
       child: const MiftahAlumniApp(),
     ),
@@ -49,10 +55,14 @@ class MiftahAlumniApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    
     return MaterialApp(
       title: 'Miftah Alumni Hub',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeProvider.themeMode,
       home: const SplashScreen(),
     );
   }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../../core/services/notification_service.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -93,6 +94,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
               if (success) {
                 if (!mounted) return;
                 Navigator.pop(context);
+                NotificationService.notifyProjectContribution(project.name, double.parse(amountController.text));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Thank you for your contribution!'), backgroundColor: AppColors.success),
                 );

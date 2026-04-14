@@ -5,6 +5,8 @@ import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
 import 'edit_profile_screen.dart';
 import 'change_password_screen.dart';
+import 'id_card_screen.dart';
+import '../../../core/providers/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -81,8 +83,19 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
             _buildProfileItem(Icons.email_outlined, 'Email Address', user?.email ?? '-'),
             _buildProfileItem(Icons.phone_outlined, 'Phone Number', user?.phone ?? '-'),
+            _buildProfileItem(Icons.people_outline, 'Gender', (user?.gender ?? 'male').toUpperCase()),
             _buildProfileItem(Icons.verified_user_outlined, 'Account Type', user?.role ?? '-'),
             const Divider(height: 32, indent: 24, endIndent: 24),
+            _buildClickableProfileItem(
+              Icons.badge_outlined,
+              'Digital ID Card',
+              'View your membership credentials',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const IdCardScreen()),
+              ),
+            ),
+            _buildThemeToggle(context),
             _buildClickableProfileItem(
               Icons.lock_reset_outlined,
               'Security',
@@ -201,6 +214,56 @@ class ProfileScreen extends StatelessWidget {
             const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildThemeToggle(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.accent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              themeProvider.isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+              color: AppColors.accent,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Dark Mode',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  themeProvider.isDarkMode ? 'High Contrast Emerald' : 'Premium Light',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: themeProvider.isDarkMode,
+            onChanged: (_) => themeProvider.toggleTheme(),
+            activeColor: AppColors.accent,
+          ),
+        ],
       ),
     );
   }

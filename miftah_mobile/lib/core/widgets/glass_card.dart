@@ -9,6 +9,8 @@ class GlassCard extends StatelessWidget {
   final double opacity;
   final Border? border;
   final EdgeInsets? padding;
+  final double? height;
+  final double? width;
 
   const GlassCard({
     super.key,
@@ -19,6 +21,8 @@ class GlassCard extends StatelessWidget {
     this.opacity = 0.15,
     this.border,
     this.padding,
+    this.height,
+    this.width,
   });
 
   @override
@@ -28,6 +32,8 @@ class GlassCard extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
+          width: width,
+          height: height,
           padding: padding ?? const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: baseColor.withOpacity(opacity),

@@ -35,13 +35,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> register(String name, String email, String phone, String password) async {
+  Future<void> register(String name, String email, String phone, String gender, String password) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final success = await authRepository.register(name, email, phone, password);
+      final success = await authRepository.register(name, email, phone, gender, password);
       if (!success) {
         _error = 'Registration failed. Please check your details.';
       }
@@ -72,7 +72,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile({String? name, String? email, String? phone, String? oldPassword, String? password, String? passwordConfirmation}) async {
+  Future<bool> updateProfile({String? name, String? email, String? phone, String? gender, String? oldPassword, String? password, String? passwordConfirmation}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -81,6 +81,7 @@ class AuthProvider extends ChangeNotifier {
         name: name,
         email: email,
         phone: phone,
+        gender: gender,
         oldPassword: oldPassword,
         password: password,
         passwordConfirmation: passwordConfirmation,

@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String _selectedGender = 'male';
   bool _obscurePassword = true;
 
   @override
@@ -39,6 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _nameController.text.trim(),
       _emailController.text.trim(),
       _phoneController.text.trim(),
+      _selectedGender,
       _passwordController.text.trim(),
     );
 
@@ -128,6 +130,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       prefixIcon: Icons.phone_android_outlined,
                       keyboardType: TextInputType.phone,
                       validator: (value) => (value == null || value.isEmpty) ? 'Phone number is required' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSectionTitle('DEMOGRAPHICS'),
+                    const SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      value: _selectedGender,
+                      decoration: InputDecoration(
+                        labelText: 'Gender',
+                        prefixIcon: Icon(Icons.people_outline, color: AppColors.primary),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: 'male', child: Text('Male')),
+                        DropdownMenuItem(value: 'female', child: Text('Female')),
+                      ],
+                      onChanged: (value) => setState(() => _selectedGender = value!),
                     ),
                     const SizedBox(height: 32),
                     _buildSectionTitle('SECURITY'),

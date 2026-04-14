@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
@@ -11,6 +12,7 @@ import '../users/user_list_screen.dart';
 import '../transactions/transaction_list_screen.dart';
 import '../projects/project_list_screen.dart';
 import '../../widgets/app_drawer.dart';
+import 'package:miftah_mobile/core/services/report_service.dart';
 
 class PresidentDashboard extends StatefulWidget {
   const PresidentDashboard({super.key});
@@ -47,6 +49,10 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildMainBalanceCard(),
+                  const SizedBox(height: 32),
+                  _buildSectionHeader('FINANCIAL INSIGHTS'),
+                  const SizedBox(height: 16),
+                  _buildFinancialInsights(),
                   const SizedBox(height: 32),
                   _buildSectionHeader('QUICK ACTIONS'),
                   const SizedBox(height: 16),
@@ -132,6 +138,20 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
         ),
       ),
       actions: [
+        IconButton(
+          onPressed: () {
+            final provider = context.read<ContributionProvider>();
+            final totalIncome = provider.allContributions.where((c) => c.status == 'paid').fold(0.0, (sum, c) => sum + c.amount);
+            final totalExpense = provider.expenses.fold(0.0, (sum, e) => sum + e.amount);
+            ReportService.generateFinancialReport(
+              chapterName: 'Kaduna Chapter',
+              contributions: provider.allContributions,
+              totalIncome: totalIncome,
+              totalExpense: totalExpense,
+            );
+          },
+          icon: const Icon(Icons.picture_as_pdf_outlined, color: Colors.white),
+        ),
         IconButton(
           onPressed: () => Navigator.push(
             context,
@@ -411,6 +431,60 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFinancialInsights() {
+    return GlassCard(
+      height: 240,
+      opacity: 0.05,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Monthly Trend',
+                style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+              ),
+              const Icon(Icons.show_chart_rounded, size: 18, color: AppColors.primary),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: LineChart(
+              LineChartData(
+                gridData: const FlGridData(show: false),
+                titlesData: const FlTitlesData(show: false),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: [
+                      const FlSpot(0, 3),
+                      const FlSpot(1, 1.5),
+                      const FlSpot(2, 4),
+                      const FlSpot(3, 3.5),
+                      const FlSpot(4, 5),
+                      const FlSpot(5, 4.2),
+                    ],
+                    isCurved: true,
+                    color: AppColors.primary,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.primary.withOpacity(0.05),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

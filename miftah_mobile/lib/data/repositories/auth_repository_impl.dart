@@ -31,11 +31,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> register(String name, String email, String phone, String password) async {
+  Future<bool> register(String name, String email, String phone, String gender, String password) async {
     final response = await remoteDataSource.post('/register', {
       'name': name,
       'email': email,
       'phone': phone,
+      'gender': gender,
       'password': password,
     });
 
@@ -58,11 +59,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User?> updateProfile({String? name, String? email, String? phone, String? oldPassword, String? password, String? passwordConfirmation}) async {
+  Future<User?> updateProfile({String? name, String? email, String? phone, String? gender, String? oldPassword, String? password, String? passwordConfirmation}) async {
     final response = await remoteDataSource.put('/profile', {
       if (name != null) 'name': name,
       if (email != null) 'email': email,
       if (phone != null) 'phone': phone,
+      if (gender != null) 'gender': gender,
       if (oldPassword != null) 'old_password': oldPassword,
       if (password != null) 'password': password,
       if (passwordConfirmation != null) 'password_confirmation': passwordConfirmation,

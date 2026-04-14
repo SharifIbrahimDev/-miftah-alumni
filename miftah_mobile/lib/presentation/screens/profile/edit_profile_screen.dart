@@ -14,6 +14,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
+  late String _gender;
 
   @override
   void initState() {
@@ -22,6 +23,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: user?.name);
     _emailController = TextEditingController(text: user?.email);
     _phoneController = TextEditingController(text: user?.phone);
+    _gender = user?.gender ?? 'male';
   }
 
   @override
@@ -38,6 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             name: _nameController.text,
             email: _emailController.text,
             phone: _phoneController.text,
+            gender: _gender,
           );
 
       if (mounted) {
@@ -100,6 +103,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   prefixIcon: Icon(Icons.phone_outlined),
                 ),
                 keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _gender,
+                decoration: const InputDecoration(
+                  labelText: 'Gender',
+                  prefixIcon: Icon(Icons.people_outline),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'male', child: Text('Male')),
+                  DropdownMenuItem(value: 'female', child: Text('Female')),
+                ],
+                onChanged: (value) => setState(() => _gender = value!),
               ),
               const SizedBox(height: 48),
               ElevatedButton(
