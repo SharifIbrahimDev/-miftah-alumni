@@ -5,9 +5,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../../core/utils/toast_service.dart';
+import '../../../core/services/biometric_service.dart';
 import '../../providers/auth_provider.dart';
 import '../main_layout.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,6 +23,35 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _hasBiometrics = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    final creds = await BiometricService.getCredentials();
+    final canAuth = await BiometricService.isBiometricAvailable();
+    if (creds != null && canAuth && mounted) {
+      setState(() {
+        _hasBiometrics = true;
+      });
+    }
+  }
+
+  Future<void> _biometricLogin() async {
+    final authenticated = await BiometricService.authenticate();
+    if (authenticated) {
+      final creds = await BiometricService.getCredentials();
+      if (creds != null) {
+        _emailController.text = creds['email']!;
+        _passwordController.text = creds['password']!;
+        await _login();
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -210,7 +241,12 @@ class _LoginScreenState extends State<LoginScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                  );
+                },
                 child: Text(
                   'Recovery Link?',
                   style: GoogleFonts.inter(
@@ -224,10 +260,32 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 32),
             Consumer<AuthProvider>(
               builder: (context, auth, _) {
-                return CustomButton(
-                  text: 'Sign In',
-                  isLoading: auth.isLoading,
-                  onPressed: _login,
+                return Row(
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        text: 'Sign In',
+                        isLoading: auth.isLoading,
+                        onPressed: _login,
+                      ),
+                    ),
+                    if (_hasBiometrics) ...[
+                      const SizedBox(width: 16),
+                      Container(
+                        height: 56,
+                        width: 56,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.fingerprint_rounded, color: AppColors.primary, size: 28),
+                          onPressed: _biometricLogin,
+                        ),
+                      ),
+                    ],
+                  ],
                 );
               },
             ),

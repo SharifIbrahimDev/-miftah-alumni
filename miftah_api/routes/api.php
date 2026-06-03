@@ -6,11 +6,15 @@ use App\Http\Controllers\Api\ContributionController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+Route::post('/verify-otp', [PasswordResetController::class, 'verifyOtp']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {

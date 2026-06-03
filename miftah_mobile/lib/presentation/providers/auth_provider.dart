@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../core/services/biometric_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository authRepository;
@@ -24,6 +25,8 @@ class AuthProvider extends ChangeNotifier {
       final user = await authRepository.login(email, password);
       if (user != null) {
         _user = user;
+        // Securely save credentials for Biometric Login
+        await BiometricService.saveCredentials(email, password);
       } else {
         _error = 'Invalid email or password';
       }
@@ -96,6 +99,48 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _error = 'An error occurred while updating profile: $e';
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> requestPasswordReset(String email) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final success = await authRepository.requestPasswordReset(email);
+      if (!success) _error = 'Failed to request password reset. Check the email.';
+      return success;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> verifyOtp(String email, String otp) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final success = await authRepository.verifyOtp(email, otp);
+      if (!success) _error = 'Invalid or expired OTP';
+      return success;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword(String email, String otp, String newPassword) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final success = await authRepository.resetPassword(email, otp, newPassword);
+      if (!success) _error = 'Failed to reset password';
+      return success;
     } finally {
       _isLoading = false;
       notifyListeners();
