@@ -78,10 +78,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   children: [
                     CustomTextField(
                       controller: _otpController,
-                      hintText: '6-Digit OTP',
-                      icon: Icons.numbers_rounded,
+                      label: '6-Digit OTP',
+                      prefixIcon: Icons.numbers_rounded,
                       keyboardType: TextInputType.number,
-                      maxLength: 6,
                     ),
                     const SizedBox(height: 24),
                     Consumer<AuthProvider>(

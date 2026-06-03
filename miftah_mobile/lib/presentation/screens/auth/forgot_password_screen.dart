@@ -78,8 +78,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   children: [
                     CustomTextField(
                       controller: _emailController,
-                      hintText: 'Email Address',
-                      icon: Icons.email_outlined,
+                      label: 'Email Address',
+                      hint: 'name@example.com',
+                      prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 24),

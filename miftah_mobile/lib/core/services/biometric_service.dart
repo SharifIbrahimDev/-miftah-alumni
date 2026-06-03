@@ -1,5 +1,6 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
 class BiometricService {
   static final _auth = LocalAuthentication();
@@ -22,10 +23,6 @@ class BiometricService {
     try {
       return await _auth.authenticate(
         localizedReason: 'Scan your fingerprint (or face) to sign in',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
       );
     } catch (e) {
       return false;

@@ -76,8 +76,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   children: [
                     CustomTextField(
                       controller: _passwordController,
-                      hintText: 'New Password',
-                      icon: Icons.lock_outline,
+                      label: 'New Password',
+                      prefixIcon: Icons.lock_outline,
                       isPassword: true,
                     ),
                     const SizedBox(height: 24),

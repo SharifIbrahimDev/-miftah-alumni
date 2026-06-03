@@ -56,22 +56,7 @@ class IdCardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfo(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white54, fontSize: 8, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          value,
-          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-}
+
 
   Widget _buildCardFront(user, bool isDark) {
     return Container(
@@ -244,6 +229,22 @@ class IdCardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfo(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white54, fontSize: 8, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

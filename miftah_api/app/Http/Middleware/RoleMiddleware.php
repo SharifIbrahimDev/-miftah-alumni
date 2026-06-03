@@ -14,7 +14,8 @@ class RoleMiddleware
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        $userRole = $request->user()->role;
+        $userRole = strtolower($request->user()->role);
+        $roles = array_map('strtolower', $roles);
 
         if (in_array($userRole, $roles)) {
             return $next($request);
