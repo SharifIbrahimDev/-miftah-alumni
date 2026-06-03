@@ -17,7 +17,10 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
     try {
       _users = await repo.getUsers();
-    } catch (_) {}
+    } catch (e, stacktrace) {
+      print('Error fetching users: $e');
+      print(stacktrace);
+    }
     _isLoading = false;
     notifyListeners();
   }

@@ -29,10 +29,10 @@ class User extends Authenticatable
     /**
      * @return bool
      */
-    public function isPresident() { return $this->role === 'president'; }
-    public function isCashier() { return $this->role === 'cashier'; }
-    public function isRegistrar() { return $this->role === 'registrar'; }
-    public function isMember() { return $this->role === 'member'; }
+    public function isPresident() { return strtolower($this->role) === 'president'; }
+    public function isCashier() { return strtolower($this->role) === 'cashier'; }
+    public function isRegistrar() { return strtolower($this->role) === 'registrar'; }
+    public function isMember() { return strtolower($this->role) === 'member'; }
 
     public function monthlyContributions()
     {
