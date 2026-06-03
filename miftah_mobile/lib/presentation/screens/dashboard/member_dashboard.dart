@@ -10,8 +10,21 @@ import '../contributions/monthly_contribution_screen.dart';
 import '../projects/project_list_screen.dart';
 import '../../widgets/app_drawer.dart';
 
-class MemberDashboard extends StatelessWidget {
+class MemberDashboard extends StatefulWidget {
   const MemberDashboard({super.key});
+
+  @override
+  State<MemberDashboard> createState() => _MemberDashboardState();
+}
+
+class _MemberDashboardState extends State<MemberDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<ContributionProvider>().fetchMyContributions();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +59,7 @@ class MemberDashboard extends StatelessWidget {
                   _buildSummaryTile(
                     context,
                     'Strategic Projects',
-                    'Contribute to chapter initiatives',
+                    'Contribute to initiatives',
                     Icons.account_balance_rounded,
                     AppColors.accent,
                     () => Navigator.push(

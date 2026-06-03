@@ -45,6 +45,8 @@ dependencies:
   printing: ^5.13.5
   flutter_local_notifications: ^21.0.0
   qr_flutter: ^4.1.0
+  flutter_animate: ^4.5.2
+  flip_card: ^0.7.0
 
 dev_dependencies:
   flutter_test:

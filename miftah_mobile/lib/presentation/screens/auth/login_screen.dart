@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/widgets/glass_card.dart';
+import '../../../core/utils/toast_service.dart';
 import '../../providers/auth_provider.dart';
-import '../dashboard/dashboard_selector.dart';
+import '../main_layout.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,17 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (authProvider.isAuthenticated) {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const DashboardSelector()),
+        MaterialPageRoute(builder: (_) => const MainLayout()),
       );
     } else {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(authProvider.error ?? 'Login failed'),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ToastService.showError(context, authProvider.error ?? 'Login failed');
     }
   }
 

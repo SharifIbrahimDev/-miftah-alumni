@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../../core/utils/shared_prefs_manager.dart';
 
 class RemoteDataSource {
-  final String baseUrl = 'https://miftah-alumni.onrender.com/api';
+  final String baseUrl = 'https://miftah-api.daynapp.com/api';
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',

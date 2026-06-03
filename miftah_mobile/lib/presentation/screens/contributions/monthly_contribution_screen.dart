@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
@@ -171,7 +172,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                                 ],
                               ),
                             ),
-                          );
+                          ).animate().fadeIn(duration: 500.ms, delay: (index * 50).ms).slideX(begin: -0.1, curve: Curves.easeOutQuint);
                         },
                       ),
               ),
@@ -235,7 +236,10 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.history_edu_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.2)),
+          Icon(Icons.history_edu_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.2))
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .moveY(begin: -5, end: 5, duration: 2.seconds)
+              .shimmer(duration: 2.seconds),
           const SizedBox(height: 16),
           Text('No records found for this year.', style: TextStyle(color: AppColors.textSecondary)),
         ],

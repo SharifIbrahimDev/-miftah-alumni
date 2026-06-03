@@ -29,7 +29,7 @@ class NotificationService {
         AndroidNotificationDetails(
       'miftah_channel',
       'General Notifications',
-      channelDescription: 'General chapter updates and payment alerts',
+      channelDescription: 'General updates and payment alerts',
       importance: Importance.max,
       priority: Priority.high,
     );

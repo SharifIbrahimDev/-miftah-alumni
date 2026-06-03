@@ -7,11 +7,14 @@ import 'data/repositories/auth_repository_impl.dart';
 import 'data/repositories/contribution_repository_impl.dart';
 import 'data/repositories/project_repository_impl.dart';
 import 'data/repositories/user_repository_impl.dart';
+import 'data/repositories/dashboard_repository_impl.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/contribution_provider.dart';
 import 'presentation/providers/project_provider.dart';
 import 'presentation/providers/user_provider.dart';
-import 'presentation/screens/splash/splash_screen.dart';
+import 'presentation/providers/dashboard_provider.dart';
+import 'presentation/screens/main_layout.dart';
+import 'presentation/screens/auth/login_screen.dart';
 import 'core/services/notification_service.dart';
 import 'core/providers/theme_provider.dart';
 
@@ -25,6 +28,7 @@ void main() async {
   final contributionRepository = ContributionRepository(remoteDataSource: remoteDataSource);
   final projectRepository = ProjectRepository(remoteDataSource: remoteDataSource);
   final userRepository = UserRepositoryImpl(remoteDataSource: remoteDataSource);
+  final dashboardRepository = DashboardRepository(remoteDataSource: remoteDataSource);
 
   runApp(
     MultiProvider(
@@ -42,6 +46,9 @@ void main() async {
           create: (_) => UserProvider(repo: userRepository),
         ),
         ChangeNotifierProvider(
+          create: (_) => DashboardProvider(repo: dashboardRepository),
+        ),
+        ChangeNotifierProvider(
           create: (_) => ThemeProvider(),
         ),
       ],
@@ -56,6 +63,7 @@ class MiftahAlumniApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = context.watch<ThemeProvider>();
+    final auth = context.watch<AuthProvider>();
     
     return MaterialApp(
       title: 'Miftah Alumni Hub',
@@ -63,7 +71,7 @@ class MiftahAlumniApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
-      home: const SplashScreen(),
+      home: auth.isAuthenticated ? const MainLayout() : const LoginScreen(),
     );
   }
 }

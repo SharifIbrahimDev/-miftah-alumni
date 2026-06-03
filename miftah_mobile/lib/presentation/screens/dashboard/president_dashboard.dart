@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/contribution_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../profile/profile_screen.dart';
 import '../users/user_list_screen.dart';
 import '../transactions/transaction_list_screen.dart';
@@ -29,6 +31,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
       context.read<ContributionProvider>().fetchAllContributions();
       context.read<ContributionProvider>().fetchExpenses();
       context.read<UserProvider>().fetchUsers();
+      context.read<DashboardProvider>().fetchDashboardData();
     });
   }
 
@@ -144,7 +147,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
             final totalIncome = provider.allContributions.where((c) => c.status == 'paid').fold(0.0, (sum, c) => sum + c.amount);
             final totalExpense = provider.expenses.fold(0.0, (sum, e) => sum + e.amount);
             ReportService.generateFinancialReport(
-              chapterName: 'Kaduna Chapter',
+              organizationName: 'Miftah Alumni Hub',
               contributions: provider.allContributions,
               totalIncome: totalIncome,
               totalExpense: totalExpense,
@@ -189,7 +192,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'CHAPTER TREASURY',
+                'TREASURY',
                 style: GoogleFonts.inter(
                   color: Colors.white.withOpacity(0.6),
                   fontSize: 11,
@@ -201,11 +204,10 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
             ],
           ),
           const SizedBox(height: 16),
-          Consumer<ContributionProvider>(
-            builder: (context, provider, _) {
-              final totalIncome = provider.allContributions.where((c) => c.status == 'paid').fold(0.0, (sum, c) => sum + c.amount);
-              final totalExpense = provider.expenses.fold(0.0, (sum, e) => sum + e.amount);
-              final balance = totalIncome - totalExpense;
+          Consumer<DashboardProvider>(
+            builder: (context, dashboard, _) {
+              if (dashboard.isLoading) return const Center(child: CircularProgressIndicator(color: Colors.white));
+              final balance = ((dashboard.stats?['total_collected_monthly'] ?? 0) - (dashboard.stats?['total_expenses'] ?? 0));
               
               return Text(
                 '₦${balance.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},")}',
@@ -227,10 +229,10 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
             ),
           ),
           const SizedBox(height: 32),
-          Consumer<ContributionProvider>(
-            builder: (context, provider, _) {
-              final totalIncome = provider.allContributions.where((c) => c.status == 'paid').fold(0.0, (sum, c) => sum + c.amount);
-              final totalExpense = provider.expenses.fold(0.0, (sum, e) => sum + e.amount);
+          Consumer<DashboardProvider>(
+            builder: (context, dashboard, _) {
+              final totalIncome = (dashboard.stats?['total_collected_monthly'] ?? 0).toDouble();
+              final totalExpense = (dashboard.stats?['total_expenses'] ?? 0).toDouble();
               
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -457,27 +459,54 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
           Expanded(
             child: LineChart(
               LineChartData(
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(show: false),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 1000,
+                  getDrawingHorizontalLine: (value) => FlLine(color: AppColors.textSecondary.withOpacity(0.1), strokeWidth: 1),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 22,
+                      getTitlesWidget: (value, meta) {
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                        if (value.toInt() >= 0 && value.toInt() < months.length) {
+                          return Text(months[value.toInt()], style: const TextStyle(color: Colors.white54, fontSize: 10));
+                        }
+                        return const Text('');
+                      },
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
                 borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: 5,
+                minY: 0,
+                maxY: 5000,
                 lineBarsData: [
                   LineChartBarData(
-                    spots: [
-                      const FlSpot(0, 3),
-                      const FlSpot(1, 1.5),
-                      const FlSpot(2, 4),
-                      const FlSpot(3, 3.5),
-                      const FlSpot(4, 5),
-                      const FlSpot(5, 4.2),
+                    spots: const [
+                      FlSpot(0, 1000),
+                      FlSpot(1, 1500),
+                      FlSpot(2, 1200),
+                      FlSpot(3, 3000),
+                      FlSpot(4, 2800),
+                      FlSpot(5, 4500),
                     ],
                     isCurved: true,
                     color: AppColors.primary,
-                    barWidth: 3,
+                    barWidth: 4,
                     isStrokeCapRound: true,
                     dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.primary.withOpacity(0.05),
+                      color: AppColors.primary.withOpacity(0.15),
                     ),
                   ),
                 ],
@@ -490,68 +519,80 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
   }
 
   Widget _buildRecentActivityList() {
-    return Column(
-      children: List.generate(3, (index) {
-        final names = ['Bashir Ahmad', 'Umar Faruk', 'Zubairu Ali'];
-        final amounts = ['₦2,500', '₦15,000', '₦5,000'];
-        final types = ['MONTHLY DUES', 'PROJECT CONTRIB.', 'MONTHLY DUES'];
+    return Consumer<DashboardProvider>(
+      builder: (context, dashboard, _) {
+        if (dashboard.isLoading) return const Center(child: CircularProgressIndicator());
+        final recentList = dashboard.stats?['recent_monthly'] as List? ?? [];
+        if (recentList.isEmpty) {
+          return Center(
+            child: Text('No recent activity', style: GoogleFonts.inter(color: Colors.white54)),
+          );
+        }
+        
+        return Column(
+          children: recentList.map((activity) {
+            final name = activity['user']?['name'] ?? 'Unknown User';
+            final amount = '₦${activity['amount'] ?? 0}';
+            final type = 'MONTHLY DUES';
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: GlassCard(
-            padding: const EdgeInsets.all(16),
-            opacity: 0.05,
-            border: Border.all(color: Colors.black.withOpacity(0.04)),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
-                  child: Text(
-                    names[index][0], 
-                    style: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold)
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        names[index], 
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15)
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        types[index], 
-                        style: GoogleFonts.inter(
-                          color: AppColors.textSecondary, 
-                          fontSize: 11, 
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                        )
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: GlassCard(
+                padding: const EdgeInsets.all(16),
+                opacity: 0.05,
+                border: Border.all(color: Colors.black.withOpacity(0.04)),
+                child: Row(
                   children: [
-                    Text(
-                      amounts[index],
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.primary, fontSize: 16),
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: AppColors.primary.withOpacity(0.1),
+                      child: Text(
+                        name.isNotEmpty ? name[0] : '?', 
+                        style: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold)
+                      ),
                     ),
-                    Text(
-                      'CREDIT',
-                      style: GoogleFonts.inter(fontSize: 9, color: AppColors.success, fontWeight: FontWeight.w900),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name, 
+                            style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15)
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            type, 
+                            style: GoogleFonts.inter(
+                              color: AppColors.textSecondary, 
+                              fontSize: 11, 
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            )
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          amount,
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.primary, fontSize: 16),
+                        ),
+                        Text(
+                          'CREDIT',
+                          style: GoogleFonts.inter(fontSize: 9, color: AppColors.success, fontWeight: FontWeight.w900),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }).toList(),
         );
-      }),
+      },
     );
   }
 }

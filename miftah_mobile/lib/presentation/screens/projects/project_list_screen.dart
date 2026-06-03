@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../providers/auth_provider.dart';
@@ -124,15 +125,18 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Ongoing Projects'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add_task_rounded),
-            onPressed: _showAddProjectDialog,
-          ),
+          if (auth.user?.isPresident == true)
+            IconButton(
+              icon: const Icon(Icons.add_task_rounded),
+              onPressed: _showAddProjectDialog,
+            ),
           const SizedBox(width: 8),
         ],
       ),
@@ -149,7 +153,10 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.rocket_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.3)),
+                  Icon(Icons.rocket_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.3))
+                      .animate(onPlay: (c) => c.repeat(reverse: true))
+                      .moveY(begin: -5, end: 5, duration: 2.seconds)
+                      .shimmer(duration: 2.seconds),
                   const SizedBox(height: 16),
                   Text('No active projects', style: GoogleFonts.inter(color: AppColors.textSecondary)),
                 ],
@@ -279,7 +286,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                     ),
                   ],
                 ),
-              );
+              ).animate().fadeIn(duration: 500.ms, delay: (index * 100).ms).slideY(begin: 0.2, curve: Curves.easeOutQuint);
             },
           );
         },

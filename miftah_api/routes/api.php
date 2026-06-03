@@ -36,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::get('/transactions', [TransactionController::class, 'index']);
         Route::post('/transactions', [TransactionController::class, 'store']);
+    });
+
+    // President only role based access
+    Route::middleware('role:president')->group(function () {
         Route::post('/projects', [ProjectController::class, 'store']);
     });
 
@@ -43,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects', [ProjectController::class, 'index']);
     Route::post('/project-contributions', [ProjectController::class, 'recordContribution']);
 
-    // Member routes
-    Route::get('/my-contributions', [ContributionController::class, 'myContributions'])->middleware('role:member,president');
-    Route::get('/my-project-contributions', [ProjectController::class, 'myContributions'])->middleware('role:member,president');
+    // Self-service routes for all users
+    Route::get('/my-contributions', [ContributionController::class, 'myContributions']);
+    Route::get('/my-project-contributions', [ProjectController::class, 'myContributions']);
 });

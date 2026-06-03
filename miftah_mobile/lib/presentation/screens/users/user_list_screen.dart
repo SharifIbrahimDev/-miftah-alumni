@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/auth_provider.dart';
+import 'add_member_screen.dart';
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
@@ -20,77 +22,44 @@ class _UserListScreenState extends State<UserListScreen> {
     Future.microtask(() => context.read<UserProvider>().fetchUsers());
   }
 
-  void _showAddUserDialog() {
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final phoneController = TextEditingController();
-    final passwordController = TextEditingController();
-    String selectedRole = 'member';
+  void _showEditRoleDialog(user) {
+    String selectedRole = user.role;
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+        builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text('Add New Member', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDialogField(nameController, 'Full Name', Icons.person_outline),
-                _buildDialogField(emailController, 'Email', Icons.email_outlined),
-                _buildDialogField(phoneController, 'Phone Number', Icons.phone_outlined),
-                _buildDialogField(passwordController, 'Initial Password', Icons.lock_outline, isPassword: true),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  value: selectedRole,
-                  decoration: InputDecoration(
-                    labelText: 'Assign Role',
-                    labelStyle: GoogleFonts.inter(fontSize: 14),
-                    filled: true,
-                    fillColor: AppColors.surfaceVariant,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  ),
-                  onChanged: (val) => setState(() => selectedRole = val!),
-                  items: ['member', 'cashier', 'registrar', 'president']
-                      .map((role) => DropdownMenuItem(value: role, child: Text(role.toUpperCase(), style: const TextStyle(fontSize: 13))))
-                      .toList(),
-                ),
-              ],
+          title: Text('Change Role for ${user.name}', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          content: DropdownButtonFormField<String>(
+            value: selectedRole,
+            decoration: InputDecoration(
+              labelText: 'Assign Role',
+              filled: true,
+              fillColor: AppColors.surfaceVariant,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
             ),
+            onChanged: (val) => setDialogState(() => selectedRole = val!),
+            items: ['member', 'cashier', 'registrar']
+                .map((role) => DropdownMenuItem(value: role, child: Text(role.toUpperCase())))
+                .toList(),
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
               onPressed: () async {
-                final success = await context.read<UserProvider>().addUser({
-                  'name': nameController.text,
-                  'email': emailController.text,
-                  'phone': phoneController.text,
-                  'password': passwordController.text,
-                  'role': selectedRole,
-                });
-                if (success) Navigator.pop(context);
+                final success = await context.read<UserProvider>().updateUserRole(user.id, selectedRole);
+                if (success) {
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Role updated successfully'), backgroundColor: AppColors.success),
+                  );
+                }
               },
-              child: const Text('Create Account'),
+              child: const Text('Save'),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: 20),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
@@ -105,7 +74,12 @@ class _UserListScreenState extends State<UserListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add_alt_1),
-            onPressed: _showAddUserDialog,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddMemberScreen()),
+              );
+            },
           ),
           const SizedBox(width: 8),
         ],
@@ -153,6 +127,11 @@ class _UserListScreenState extends State<UserListScreen> {
                         border: Border.all(color: AppColors.surfaceVariant),
                       ),
                       child: ListTile(
+                        onTap: () {
+                          if (context.read<AuthProvider>().user?.isPresident == true) {
+                            _showEditRoleDialog(user);
+                          }
+                        },
                         contentPadding: const EdgeInsets.all(12),
                         leading: Container(
                           width: 56,

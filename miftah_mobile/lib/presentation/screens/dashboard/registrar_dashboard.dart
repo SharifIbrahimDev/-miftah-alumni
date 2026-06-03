@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../profile/profile_screen.dart';
 import '../users/user_list_screen.dart';
 import '../../widgets/app_drawer.dart';
@@ -17,6 +20,15 @@ class RegistrarDashboard extends StatefulWidget {
 }
 
 class _RegistrarDashboardState extends State<RegistrarDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<UserProvider>().fetchUsers();
+      context.read<DashboardProvider>().fetchDashboardData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
@@ -35,12 +47,14 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
                 children: [
                   _buildStatBanner(),
                   const SizedBox(height: 32),
+                  _buildDemographicChart(),
+                  const SizedBox(height: 32),
                   _buildSectionTitle('REGISTRATION COMMAND'),
                   const SizedBox(height: 16),
                   _buildActionCard(
                     context,
                     'Manage Alumni List',
-                    'Database of all chapter members',
+                    'Database of all members',
                     Icons.groups_rounded,
                     AppColors.primary,
                     () => Navigator.push(
@@ -52,7 +66,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
                   _buildActionCard(
                     context,
                     'New Registration',
-                    'Direct entry for new chapter members',
+                    'Direct entry for new members',
                     Icons.person_add_alt_1_rounded,
                     AppColors.accent,
                     () => _showNewRegistrationDialog(context),
@@ -214,6 +228,83 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
     );
   }
 
+  Widget _buildDemographicChart() {
+    return GlassCard(
+      height: 240,
+      opacity: 0.05,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Member Demographics',
+                style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+              ),
+              const Icon(Icons.pie_chart_rounded, size: 18, color: AppColors.primary),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: PieChart(
+                    PieChartData(
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 30,
+                      sections: [
+                        PieChartSectionData(
+                          value: 65,
+                          title: '65%',
+                          color: AppColors.primary,
+                          radius: 40,
+                          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        PieChartSectionData(
+                          value: 35,
+                          title: '35%',
+                          color: AppColors.accent,
+                          radius: 35,
+                          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLegendItem('Male', AppColors.primary),
+                      const SizedBox(height: 12),
+                      _buildLegendItem('Female', AppColors.accent),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(String title, Color color) {
+    return Row(
+      children: [
+        Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 8),
+        Text(title, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+      ],
+    );
+  }
+
   Widget _buildStatBanner() {
     return GlassCard(
       baseColor: AppColors.primary,
@@ -223,7 +314,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
       child: Column(
         children: [
           Text(
-            'CHAPTER POPULATION',
+            'TOTAL POPULATION',
             style: GoogleFonts.inter(
               color: Colors.white.withOpacity(0.6),
               fontSize: 11,
@@ -232,14 +323,20 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            '1,240',
-            style: GoogleFonts.outfit(
-              color: Colors.white,
-              fontSize: 52,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -1,
-            ),
+          Consumer<DashboardProvider>(
+            builder: (context, dashboard, _) {
+              if (dashboard.isLoading) return const CircularProgressIndicator(color: Colors.white);
+              final totalMembers = dashboard.stats?['total_members'] ?? 0;
+              return Text(
+                NumberFormat('#,##0').format(totalMembers),
+                style: GoogleFonts.outfit(
+                  color: Colors.white,
+                  fontSize: 52,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -1,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 4),
           Text(

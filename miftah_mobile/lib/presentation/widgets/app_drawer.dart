@@ -4,9 +4,6 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/profile/profile_screen.dart';
-import '../screens/contributions/monthly_contribution_screen.dart';
-import '../screens/projects/project_list_screen.dart';
 import '../screens/users/user_list_screen.dart';
 import '../screens/transactions/transaction_list_screen.dart';
 
@@ -26,42 +23,7 @@ class AppDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.dashboard_outlined,
-                  label: 'Dashboard',
-                  onTap: () => Navigator.pop(context), // Already on dashboard
-                ),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.person_outline,
-                  label: 'My Profile',
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-                  },
-                ),
-                const Divider(indent: 16, endIndent: 16),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.payments_outlined,
-                  label: 'Monthly Contributions',
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const MonthlyContributionScreen()));
-                  },
-                ),
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.account_balance_rounded,
-                  label: 'Strategic Projects',
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ProjectListScreen()));
-                  },
-                ),
                 if (user?.isPresident == true || user?.isRegistrar == true) ...[
-                  const Divider(indent: 16, endIndent: 16),
                   _buildDrawerItem(
                     context,
                     icon: Icons.people_outline,

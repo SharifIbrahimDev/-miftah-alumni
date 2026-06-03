@@ -21,6 +21,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string',
+            'gender' => 'required|string|in:male,female',
             'role' => ['sometimes', Rule::in(['president', 'cashier', 'registrar', 'member'])],
             'password' => 'required|string|min:6',
         ]);
@@ -35,6 +36,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'gender' => $request->gender,
             'role' => $role,
             'password' => Hash::make($request->password),
         ]);

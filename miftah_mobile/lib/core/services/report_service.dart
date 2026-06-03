@@ -5,7 +5,7 @@ import '../../domain/entities/contribution.dart';
 
 class ReportService {
   static Future<void> generateFinancialReport({
-    required String chapterName,
+    required String organizationName,
     required List<MonthlyContribution> contributions,
     required double totalIncome,
     required double totalExpense,
@@ -29,7 +29,7 @@ class ReportService {
               ),
             ),
             pw.SizedBox(height: 20),
-            pw.Text('Chapter: $chapterName'),
+            pw.Text('Organization: $organizationName'),
             pw.Text('Date: ${DateTime.now().toIso8601String().split('T')[0]}'),
             pw.Divider(thickness: 2),
             pw.SizedBox(height: 32),
