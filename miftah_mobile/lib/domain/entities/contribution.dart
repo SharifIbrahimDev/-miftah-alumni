@@ -62,7 +62,7 @@ class Project {
       name: json['name'],
       description: json['description'],
       targetAmount: double.parse(json['target_amount'].toString()),
-      raisedAmount: double.parse(json['total_contributed']?.toString() ?? '0'),
+      raisedAmount: double.parse(json['contributions_sum_amount']?.toString() ?? '0'),
       createdBy: json['created_by'],
       createdByName: json['creator']['name'],
     );
@@ -73,7 +73,7 @@ class Expense {
   final int id;
   final String description;
   final double amount;
-  final String category;
+  final String type;
   final String recordedByName;
   final DateTime createdAt;
 
@@ -81,7 +81,7 @@ class Expense {
     required this.id,
     required this.description,
     required this.amount,
-    required this.category,
+    required this.type,
     required this.recordedByName,
     required this.createdAt,
   });
@@ -91,7 +91,7 @@ class Expense {
       id: json['id'],
       description: json['description'],
       amount: double.parse(json['amount'].toString()),
-      category: json['category'],
+      type: json['type'] ?? 'debit',
       recordedByName: json['recorder']?['name'] ?? 'System',
       createdAt: DateTime.parse(json['created_at']),
     );

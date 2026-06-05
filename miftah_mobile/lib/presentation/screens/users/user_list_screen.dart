@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/user_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../widgets/shimmer_list_widget.dart';
 import 'add_member_screen.dart';
 
 class UserListScreen extends StatefulWidget {
@@ -92,7 +94,7 @@ class _UserListScreenState extends State<UserListScreen> {
           }).toList();
 
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ShimmerListWidget(itemCount: 8);
           }
 
           return Column(
@@ -112,7 +114,11 @@ class _UserListScreenState extends State<UserListScreen> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
+                child: RefreshIndicator(
+                  onRefresh: () => context.read<UserProvider>().fetchUsers(),
+                  color: AppColors.accent,
+                  backgroundColor: AppColors.primary,
+                  child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: users.length,
                   itemBuilder: (context, index) {
@@ -174,7 +180,7 @@ class _UserListScreenState extends State<UserListScreen> {
                           ],
                         ),
                       ),
-                    );
+                    ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms).slideX(begin: 0.1, curve: Curves.easeOutQuint);
                   },
                 ),
               ),

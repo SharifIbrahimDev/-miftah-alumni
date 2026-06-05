@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class TransactionListScreen extends StatelessWidget {
   const TransactionListScreen({super.key});
@@ -31,7 +33,7 @@ class TransactionListScreen extends StatelessWidget {
                 )),
             ...expenses.map((e) => _TransactionItem(
                   title: e.description,
-                  subtitle: e.category,
+                  subtitle: e.type,
                   amount: e.amount,
                   isCredit: false,
                   date: e.createdAt,
@@ -42,15 +44,10 @@ class TransactionListScreen extends StatelessWidget {
           allTransactions.sort((a, b) => b.date.compareTo(a.date));
 
           if (allTransactions.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.receipt_long_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.2)),
-                  const SizedBox(height: 16),
-                  Text('No financial records found.', style: TextStyle(color: AppColors.textSecondary)),
-                ],
-              ),
+            return const EmptyStateWidget(
+              icon: Icons.receipt_long_rounded,
+              title: 'No Financial Records',
+              subtitle: 'There are no transactions or contributions recorded in the ledger yet.',
             );
           }
 
@@ -108,7 +105,7 @@ class TransactionListScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              );
+              ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms).slideX(begin: 0.1, curve: Curves.easeOutQuint);
             },
           );
         },

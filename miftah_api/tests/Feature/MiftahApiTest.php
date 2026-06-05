@@ -179,6 +179,7 @@ class MiftahApiTest extends TestCase
             'name' => 'New Cashier',
             'email' => 'cashier@example.com',
             'phone' => '111222333',
+            'gender' => 'female',
             'role' => 'cashier',
             'password' => 'password123',
         ];
@@ -193,6 +194,7 @@ class MiftahApiTest extends TestCase
             'name' => 'New Member',
             'email' => 'newmem@example.com',
             'phone' => '444555666',
+            'gender' => 'male',
             'role' => 'cashier', // will default to member
             'password' => 'password123',
         ];
@@ -302,7 +304,7 @@ class MiftahApiTest extends TestCase
             'target_amount' => 500000,
         ];
 
-        $resProject = $this->actingAs($cashier)
+        $resProject = $this->actingAs($president)
             ->postJson('/api/projects', $projectData);
 
         $resProject->assertStatus(201);

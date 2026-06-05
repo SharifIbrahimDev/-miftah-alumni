@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/shared_prefs_manager.dart';
 import '../auth/login_screen.dart';
+import 'onboarding_screen.dart';
 import '../dashboard/dashboard_selector.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -32,9 +36,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final authProvider = context.read<AuthProvider>();
 
+    final hasSeenOnboarding = SharedPrefsManager.getBool('has_seen_onboarding') ?? false;
+
     if (authProvider.isAuthenticated) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const DashboardSelector()),
+      );
+    } else if (!hasSeenOnboarding) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
       );
     } else {
       Navigator.of(context).pushReplacement(
@@ -129,16 +139,15 @@ class _SplashScreenState extends State<SplashScreen> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                
                 const SizedBox(height: 80),
                 
                 // Loading Indicator
-                const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
-                  strokeWidth: 3,
+                const SpinKitPulse(
+                  color: AppColors.accent,
+                  size: 50.0,
                 ),
               ],
-            ),
+            ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.95, 0.95)),
           ),
         ],
       ),

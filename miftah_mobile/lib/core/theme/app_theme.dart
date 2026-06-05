@@ -20,15 +20,21 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: AppColors.background,
       textTheme: textTheme.copyWith(
-        displayLarge: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.textPrimary, fontSize: 32),
-        headlineMedium: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppColors.textPrimary, fontSize: 24),
-        titleLarge: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: AppColors.textPrimary, fontSize: 20),
-        bodyLarge: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 16),
+        displayLarge: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.textPrimary, fontSize: 32, letterSpacing: -1.0),
+        headlineMedium: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppColors.textPrimary, fontSize: 24, letterSpacing: -0.5),
+        titleLarge: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: AppColors.textPrimary, fontSize: 20, letterSpacing: -0.5),
+        bodyLarge: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 16, height: 1.5),
       ),
       appBarTheme: _appBarTheme(AppColors.background, AppColors.textPrimary),
       elevatedButtonTheme: _elevatedButtonTheme(),
       cardTheme: _cardTheme(AppColors.surface),
       inputDecorationTheme: _inputTheme(AppColors.surfaceVariant, AppColors.textSecondary),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 
@@ -50,16 +56,22 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,
       textTheme: textTheme.copyWith(
-        displayLarge: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.textPrimaryDark, fontSize: 32),
-        headlineMedium: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppColors.textPrimaryDark, fontSize: 24),
-        titleLarge: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: AppColors.textPrimaryDark, fontSize: 20),
-        bodyLarge: GoogleFonts.inter(color: AppColors.textPrimaryDark, fontSize: 16),
-        bodyMedium: GoogleFonts.inter(color: AppColors.textSecondaryDark, fontSize: 14),
+        displayLarge: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: AppColors.textPrimaryDark, fontSize: 32, letterSpacing: -1.0),
+        headlineMedium: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppColors.textPrimaryDark, fontSize: 24, letterSpacing: -0.5),
+        titleLarge: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: AppColors.textPrimaryDark, fontSize: 20, letterSpacing: -0.5),
+        bodyLarge: GoogleFonts.inter(color: AppColors.textPrimaryDark, fontSize: 16, height: 1.5),
+        bodyMedium: GoogleFonts.inter(color: AppColors.textSecondaryDark, fontSize: 14, height: 1.5),
       ),
       appBarTheme: _appBarTheme(AppColors.backgroundDark, AppColors.textPrimaryDark),
       elevatedButtonTheme: _elevatedButtonTheme(),
       cardTheme: _cardTheme(AppColors.surfaceDark),
       inputDecorationTheme: _inputTheme(AppColors.surfaceVariantDark, AppColors.textSecondaryDark),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _biometricLogin() async {
+    HapticFeedback.lightImpact();
     final authenticated = await BiometricService.authenticate();
     if (authenticated) {
       final creds = await BiometricService.getCredentials();
@@ -61,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
+    HapticFeedback.lightImpact();
     if (!_formKey.currentState!.validate()) return;
 
     final authProvider = context.read<AuthProvider>();

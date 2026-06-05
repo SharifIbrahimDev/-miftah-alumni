@@ -8,10 +8,11 @@ class ContributionRepository {
   ContributionRepository({required this.remoteDataSource});
 
   Future<List<Expense>> getExpenses() async {
-    final response = await remoteDataSource.get('/expenses');
+    final response = await remoteDataSource.get('/transactions');
     if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.map((json) => Expense.fromJson(json)).toList();
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List list = data['data'] ?? [];
+      return list.map((json) => Expense.fromJson(json)).toList();
     }
     return [];
   }
@@ -46,10 +47,10 @@ class ContributionRepository {
   }
 
   Future<bool> recordExpense(String description, double amount, String category) async {
-    final response = await remoteDataSource.post('/expenses', {
+    final response = await remoteDataSource.post('/transactions', {
       'description': description,
       'amount': amount,
-      'category': category,
+      'type': 'debit',
     });
     return response.statusCode == 201;
   }

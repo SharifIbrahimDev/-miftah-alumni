@@ -289,3 +289,5 @@ Did you mean one of these?
 #33 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/artisan(13): Illuminate/Foundation/Application->handleCommand()
 #34 {main}
 "} 
+[2026-06-05 15:33:13] testing.INFO: Password Reset OTP for test@example.com: 119767  
+[2026-06-05 15:33:49] testing.INFO: Password Reset OTP for test@example.com: 971188  

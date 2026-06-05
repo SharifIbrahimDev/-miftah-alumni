@@ -6,6 +6,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/services/notification_service.dart';
+import '../../widgets/empty_state_widget.dart';
+import '../../widgets/shimmer_list_widget.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -143,28 +145,24 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       body: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ShimmerListWidget(itemCount: 5);
           }
 
           final projects = provider.projects;
 
           if (projects.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.rocket_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.3))
-                      .animate(onPlay: (c) => c.repeat(reverse: true))
-                      .moveY(begin: -5, end: 5, duration: 2.seconds)
-                      .shimmer(duration: 2.seconds),
-                  const SizedBox(height: 16),
-                  Text('No active projects', style: GoogleFonts.inter(color: AppColors.textSecondary)),
-                ],
-              ),
+            return const EmptyStateWidget(
+              icon: Icons.rocket_launch_outlined,
+              title: 'No Projects Yet',
+              subtitle: 'There are no active projects to display right now. Check back later!',
             );
           }
 
-          return ListView.builder(
+          return RefreshIndicator(
+            onRefresh: () => context.read<ProjectProvider>().fetchProjects(),
+            color: AppColors.accent,
+            backgroundColor: AppColors.primary,
+            child: ListView.builder(
             padding: const EdgeInsets.all(20),
             itemCount: projects.length,
             itemBuilder: (context, index) {

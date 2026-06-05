@@ -22,6 +22,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<User?> createUser(Map<String, dynamic> data) async {
     final response = await remoteDataSource.post('/users', data);
+    print('CREATE USER RESPONSE: ${response.statusCode} - ${response.body}');
     if (response.statusCode == 201) {
       return User.fromJson(jsonDecode(response.body));
     }

@@ -3,6 +3,7 @@ import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/remote_data_source.dart';
 import '../../core/utils/shared_prefs_manager.dart';
+import '../../core/utils/secure_storage_manager.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final RemoteDataSource remoteDataSource;
@@ -19,8 +20,8 @@ class AuthRepositoryImpl implements AuthRepository {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final user = User.fromJson(body['user']);
+      await SecureStorageManager.saveToken(body['token']);
       await SharedPrefsManager.saveAuthData(
-        token: body['token'],
         role: user.role,
         id: user.id,
         name: user.name,
@@ -46,6 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await remoteDataSource.post('/logout', {});
+    await SecureStorageManager.deleteToken();
     await SharedPrefsManager.clearAuthData();
   }
 
@@ -73,7 +75,6 @@ class AuthRepositoryImpl implements AuthRepository {
     if (response.statusCode == 200) {
       final user = User.fromJson(jsonDecode(response.body));
       await SharedPrefsManager.saveAuthData(
-        token: SharedPrefsManager.getToken() ?? '',
         role: user.role,
         id: user.id,
         name: user.name,
