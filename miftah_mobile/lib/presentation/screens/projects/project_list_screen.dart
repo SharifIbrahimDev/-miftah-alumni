@@ -286,7 +286,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                 ),
               ).animate().fadeIn(duration: 500.ms, delay: (index * 100).ms).slideY(begin: 0.2, curve: Curves.easeOutQuint);
             },
-          );
+          ),
+        );
         },
       ),
     );

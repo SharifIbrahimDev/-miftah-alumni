@@ -183,6 +183,7 @@ class _UserListScreenState extends State<UserListScreen> {
                     ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms).slideX(begin: 0.1, curve: Curves.easeOutQuint);
                   },
                 ),
+               ),
               ),
             ],
           );
