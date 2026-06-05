@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'miftah_mobile/**'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 jobs:
