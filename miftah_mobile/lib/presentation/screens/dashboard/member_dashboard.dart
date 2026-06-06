@@ -9,6 +9,7 @@ import '../profile/profile_screen.dart';
 import '../contributions/monthly_contribution_screen.dart';
 import '../projects/project_list_screen.dart';
 import '../../widgets/app_drawer.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class MemberDashboard extends StatefulWidget {
   const MemberDashboard({super.key});
@@ -237,14 +238,10 @@ class _MemberDashboardState extends State<MemberDashboard> {
         final activities = provider.myContributions;
         
         if (activities.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text(
-                'No recent activity found.',
-                style: GoogleFonts.inter(color: AppColors.textSecondary),
-              ),
-            ),
+          return const EmptyStateWidget(
+            icon: Icons.history_rounded,
+            title: 'No Recent Activity',
+            subtitle: 'Your recent contributions and payments will appear here.',
           );
         }
 

@@ -11,6 +11,7 @@ import '../../providers/dashboard_provider.dart';
 import '../profile/profile_screen.dart';
 import '../users/user_list_screen.dart';
 import '../../widgets/app_drawer.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class RegistrarDashboard extends StatefulWidget {
   const RegistrarDashboard({super.key});
@@ -406,14 +407,10 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
         final recentUsers = provider.users.take(5).toList();
         
         if (recentUsers.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text(
-                'No recent enrollments found.',
-                style: GoogleFonts.inter(color: AppColors.textSecondary),
-              ),
-            ),
+          return const EmptyStateWidget(
+            icon: Icons.person_add_disabled_rounded,
+            title: 'No Enrollments',
+            subtitle: 'No recent enrollments found in the database.',
           );
         }
 

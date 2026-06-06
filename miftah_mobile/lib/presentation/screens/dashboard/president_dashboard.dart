@@ -15,6 +15,7 @@ import '../transactions/transaction_list_screen.dart';
 import '../projects/project_list_screen.dart';
 import '../../widgets/app_drawer.dart';
 import 'package:miftah_mobile/core/services/report_service.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class PresidentDashboard extends StatefulWidget {
   const PresidentDashboard({super.key});
@@ -524,8 +525,10 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
         if (dashboard.isLoading) return const Center(child: CircularProgressIndicator());
         final recentList = dashboard.stats?['recent_monthly'] as List? ?? [];
         if (recentList.isEmpty) {
-          return Center(
-            child: Text('No recent activity', style: GoogleFonts.inter(color: Colors.white54)),
+          return const EmptyStateWidget(
+            icon: Icons.history_rounded,
+            title: 'No Recent Activity',
+            subtitle: 'There is no recent activity to display right now.',
           );
         }
         

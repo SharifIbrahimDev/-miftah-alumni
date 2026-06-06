@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../../core/widgets/glass_card.dart';
 
 class TransactionListScreen extends StatelessWidget {
   const TransactionListScreen({super.key});
@@ -57,12 +58,11 @@ class TransactionListScreen extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final tx = allTransactions[index];
-              return Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.surfaceVariant),
-                ),
+              return GlassCard(
+                padding: const EdgeInsets.all(4),
+                baseColor: tx.isCredit ? AppColors.success : AppColors.error,
+                opacity: 0.05,
+                border: Border.all(color: AppColors.surfaceVariant.withOpacity(0.5)),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   leading: Container(

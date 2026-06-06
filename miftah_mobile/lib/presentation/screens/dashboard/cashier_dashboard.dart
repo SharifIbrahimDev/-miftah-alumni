@@ -9,6 +9,7 @@ import '../../providers/user_provider.dart';
 import '../profile/profile_screen.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/app_drawer.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class CashierDashboard extends StatefulWidget {
   const CashierDashboard({super.key});
@@ -427,11 +428,10 @@ class _CashierDashboardState extends State<CashierDashboard> {
         final members = provider.users.take(5).toList();
         
         if (members.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text('No members found to collect from.', style: GoogleFonts.inter(color: AppColors.textSecondary)),
-            ),
+          return const EmptyStateWidget(
+            icon: Icons.people_outline_rounded,
+            title: 'No Pending Dues',
+            subtitle: 'No members found to collect from at this time.',
           );
         }
 
