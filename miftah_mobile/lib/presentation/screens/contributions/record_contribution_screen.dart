@@ -20,7 +20,7 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
   final _amountController = TextEditingController(text: '2500');
   final List<User> _selectedUsers = [];
   TextEditingController? _autoCompleteController;
-  String _selectedMonth = 'January';
+  final List<String> _selectedMonths = [];
   String _selectedYear = '2026';
 
   final List<String> _months = [
@@ -34,7 +34,7 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
     super.initState();
     // Default to current month/year
     final now = DateTime.now();
-    _selectedMonth = _months[now.month - 1];
+    _selectedMonths.add(_months[now.month - 1]);
     _selectedYear = now.year.toString();
     if (!_years.contains(_selectedYear)) {
       _years.add(_selectedYear);
@@ -47,29 +47,35 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
       ToastService.showError(context, 'Please select at least one member');
       return;
     }
+    if (_selectedMonths.isEmpty) {
+      ToastService.showError(context, 'Please select at least one month');
+      return;
+    }
     final amount = double.tryParse(_amountController.text);
     if (amount == null || amount <= 0) {
       ToastService.showError(context, 'Please enter a valid amount');
       return;
     }
 
-    final monthString = '$_selectedMonth $_selectedYear';
     bool hasError = false;
 
     for (final user in _selectedUsers) {
-      final success = await context.read<ContributionProvider>().recordContribution(
-            user.id,
-            amount,
-            monthString,
-            'paid',
-          );
-      if (!success) {
-        hasError = true;
+      for (final month in _selectedMonths) {
+        final monthString = '$month $_selectedYear';
+        final success = await context.read<ContributionProvider>().recordContribution(
+              user.id,
+              amount,
+              monthString,
+              'paid',
+            );
+        if (!success) {
+          hasError = true;
+        }
       }
     }
 
     if (!hasError && mounted) {
-      ToastService.showSuccess(context, 'Payments recorded successfully for ${_selectedUsers.length} member(s)');
+      ToastService.showSuccess(context, 'Payments recorded successfully for ${_selectedUsers.length} member(s) across ${_selectedMonths.length} month(s)');
       Navigator.pop(context);
     } else if (mounted) {
       ToastService.showError(context, 'Failed to record one or more payments');
@@ -150,57 +156,49 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
               ),
             
             const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Month',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        value: _selectedMonth,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.calendar_month_outlined),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: AppColors.surface,
-                        ),
-                        items: _months.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
-                        onChanged: (val) => setState(() => _selectedMonth = val!),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Year',
-                        style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        value: _selectedYear,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                          filled: true,
-                          fillColor: AppColors.surface,
-                        ),
-                        items: _years.map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
-                        onChanged: (val) => setState(() => _selectedYear = val!),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Text(
+              'Year',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: _selectedYear,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: AppColors.surface,
+              ),
+              items: _years.map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
+              onChanged: (val) => setState(() => _selectedYear = val!),
+            ),
+            
+            const SizedBox(height: 24),
+            Text(
+              'Months',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _months.map((month) {
+                final isSelected = _selectedMonths.contains(month);
+                return FilterChip(
+                  label: Text(month, style: const TextStyle(fontSize: 12)),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        _selectedMonths.add(month);
+                      } else {
+                        _selectedMonths.remove(month);
+                      }
+                    });
+                  },
+                  selectedColor: AppColors.accent.withValues(alpha: 0.2),
+                  checkmarkColor: AppColors.accent,
+                );
+              }).toList(),
             ),
             
             const SizedBox(height: 24),
