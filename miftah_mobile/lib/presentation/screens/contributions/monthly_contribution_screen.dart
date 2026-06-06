@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
@@ -8,6 +7,7 @@ import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../widgets/empty_state_widget.dart';
+import 'record_contribution_screen.dart';
 
 class MonthlyContributionScreen extends StatefulWidget {
   const MonthlyContributionScreen({super.key});
@@ -22,167 +22,150 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => context.read<ContributionProvider>().fetchMyContributions());
+    Future.microtask(() {
+      final auth = context.read<AuthProvider>();
+      final provider = context.read<ContributionProvider>();
+      provider.fetchMyContributions();
+      if (auth.user?.isPresident == true || auth.user?.isCashier == true) {
+        provider.fetchAllContributions();
+      }
+    });
   }
-
-  void _showRecordPaymentDialog() {
-    final amountController = TextEditingController(text: '2500');
-    final monthController = TextEditingController(text: DateFormat('MMMM yyyy').format(DateTime.now()));
-
-    CustomDialogBox.show(
-      context: context,
-      title: 'Record Payment',
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: CustomTextField(
-                controller: monthController,
-                label: 'Contribution Month',
-                prefixIcon: Icons.calendar_month_outlined,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: CustomTextField(
-                controller: amountController,
-                label: 'Amount (₦)',
-                prefixIcon: Icons.payments_outlined,
-                keyboardType: TextInputType.number,
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        SizedBox(
-          width: 140,
-          child: CustomButton(
-            text: 'Record Now',
-            onPressed: () async {
-              final auth = context.read<AuthProvider>();
-              final success = await context.read<ContributionProvider>().recordContribution(
-                auth.user!.id,
-                double.parse(amountController.text),
-                monthController.text,
-                'paid',
-              );
-              if (success) {
-                Navigator.pop(context);
-                context.read<ContributionProvider>().fetchMyContributions();
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
-    final canRecord = auth.user?.isPresident == true || auth.user?.isCashier == true;
+    final isCashier = auth.user?.isCashier == true;
+    final isAdmin = auth.user?.isPresident == true || isCashier;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(
-        title: 'Monthly Ledger',
+    return DefaultTabController(
+      length: isAdmin ? 2 : 1,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: CustomAppBar(
+          title: 'Monthly Ledger',
+          bottom: isAdmin
+              ? const TabBar(
+                  indicatorColor: AppColors.accent,
+                  labelColor: AppColors.accent,
+                  unselectedLabelColor: Colors.white70,
+                  tabs: [
+                    Tab(text: 'My Ledger'),
+                    Tab(text: 'All Records'),
+                  ],
+                )
+              : null,
+        ),
+        floatingActionButton: isCashier
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RecordContributionScreen()),
+                  );
+                },
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
+                label: const Text('New Entry', style: TextStyle(fontWeight: FontWeight.bold)),
+                icon: const Icon(Icons.add_task_rounded),
+              )
+            : null,
+        body: Consumer<ContributionProvider>(
+          builder: (context, provider, _) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (isAdmin) {
+              return TabBarView(
+                children: [
+                  _buildList(provider.myContributions),
+                  _buildList(provider.allContributions, isAllRecords: true),
+                ],
+              );
+            } else {
+              return _buildList(provider.myContributions);
+            }
+          },
+        ),
       ),
-      floatingActionButton: canRecord
-          ? FloatingActionButton.extended(
-              onPressed: _showRecordPaymentDialog,
-              backgroundColor: AppColors.accent,
-              foregroundColor: Colors.white,
-              label: const Text('New Entry', style: TextStyle(fontWeight: FontWeight.bold)),
-              icon: const Icon(Icons.add_task_rounded),
-            )
-          : null,
-      body: Consumer<ContributionProvider>(
-        builder: (context, provider, _) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    );
+  }
 
-          final contributions = provider.myContributions;
-          final totalPaid = contributions.fold(0.0, (sum, item) => sum + (item.isPaid ? item.amount : 0));
+  Widget _buildList(List contributions, {bool isAllRecords = false}) {
+    // Filter contributions by selected year
+    final filteredContributions = contributions.where((c) => c.month.contains(_selectedYear)).toList();
+    final totalPaid = filteredContributions.fold(0.0, (sum, item) => sum + (item.isPaid ? item.amount : 0));
 
-          return Column(
-            children: [
-              _buildSummaryHeader(totalPaid),
-              _buildYearFilter(),
-              Expanded(
-                child: contributions.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: contributions.length,
-                        itemBuilder: (context, index) {
-                          final contribution = contributions[index];
-                          final isPaid = contribution.isPaid;
+    return Column(
+      children: [
+        _buildSummaryHeader(totalPaid),
+        _buildYearFilter(),
+        Expanded(
+          child: filteredContributions.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: filteredContributions.length,
+                  itemBuilder: (context, index) {
+                    final contribution = filteredContributions[index];
+                    final isPaid = contribution.isPaid;
 
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: AppColors.surface,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.surfaceVariant),
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                              leading: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  isPaid ? Icons.check_circle_rounded : Icons.pending_rounded,
-                                  color: isPaid ? AppColors.success : AppColors.error,
-                                ),
-                              ),
-                              title: Text(
-                                contribution.month,
-                                style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              subtitle: Text(isPaid ? 'Payment Verified' : 'Awaiting Payment', style: const TextStyle(fontSize: 12)),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '₦${contribution.amount.toStringAsFixed(0)}',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.bold,
-                                      color: isPaid ? AppColors.success : AppColors.error,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    isPaid ? 'PAID' : 'DUE',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1,
-                                      color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ).animate().fadeIn(duration: 500.ms, delay: (index * 50).ms).slideX(begin: -0.1, curve: Curves.easeOutQuint);
-                        },
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.surfaceVariant),
                       ),
-              ),
-            ],
-          );
-        },
-      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        leading: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            isPaid ? Icons.check_circle_rounded : Icons.pending_rounded,
+                            color: isPaid ? AppColors.success : AppColors.error,
+                          ),
+                        ),
+                        title: Text(
+                          isAllRecords ? '${contribution.userName} - ${contribution.month}' : contribution.month,
+                          style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        subtitle: Text(isPaid ? 'Payment Verified' : 'Awaiting Payment', style: const TextStyle(fontSize: 12)),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '₦${contribution.amount.toStringAsFixed(0)}',
+                              style: GoogleFonts.outfit(
+                                fontWeight: FontWeight.bold,
+                                color: isPaid ? AppColors.success : AppColors.error,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              isPaid ? 'PAID' : 'DUE',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate().fadeIn(duration: 500.ms, delay: (index * 50).ms).slideX(begin: -0.1, curve: Curves.easeOutQuint);
+                  },
+                ),
+        ),
+      ],
     );
   }
 
@@ -242,4 +225,3 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
     );
   }
 }
-
