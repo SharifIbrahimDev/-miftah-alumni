@@ -18,7 +18,8 @@ class RecordContributionScreen extends StatefulWidget {
 
 class _RecordContributionScreenState extends State<RecordContributionScreen> {
   final _amountController = TextEditingController(text: '2500');
-  User? _selectedUser;
+  final List<User> _selectedUsers = [];
+  TextEditingController? _autoCompleteController;
   String _selectedMonth = 'January';
   String _selectedYear = '2026';
 
@@ -42,8 +43,8 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
   }
 
   Future<void> _recordPayment() async {
-    if (_selectedUser == null) {
-      ToastService.showError(context, 'Please select a member first');
+    if (_selectedUsers.isEmpty) {
+      ToastService.showError(context, 'Please select at least one member');
       return;
     }
     final amount = double.tryParse(_amountController.text);
@@ -53,18 +54,25 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
     }
 
     final monthString = '$_selectedMonth $_selectedYear';
-    final success = await context.read<ContributionProvider>().recordContribution(
-          _selectedUser!.id,
-          amount,
-          monthString,
-          'paid',
-        );
+    bool hasError = false;
 
-    if (success && mounted) {
-      ToastService.showSuccess(context, 'Payment recorded for ${_selectedUser!.name}');
+    for (final user in _selectedUsers) {
+      final success = await context.read<ContributionProvider>().recordContribution(
+            user.id,
+            amount,
+            monthString,
+            'paid',
+          );
+      if (!success) {
+        hasError = true;
+      }
+    }
+
+    if (!hasError && mounted) {
+      ToastService.showSuccess(context, 'Payments recorded successfully for ${_selectedUsers.length} member(s)');
       Navigator.pop(context);
     } else if (mounted) {
-      ToastService.showError(context, 'Failed to record payment');
+      ToastService.showError(context, 'Failed to record one or more payments');
     }
   }
 
@@ -100,9 +108,18 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
                 });
               },
               onSelected: (User selection) {
-                setState(() => _selectedUser = selection);
+                setState(() {
+                  if (!_selectedUsers.any((u) => u.id == selection.id)) {
+                    _selectedUsers.add(selection);
+                  }
+                });
+                // Delay clearing slightly so Autocomplete completes its internal state update
+                Future.microtask(() {
+                  _autoCompleteController?.clear();
+                });
               },
               fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                _autoCompleteController = controller;
                 return CustomTextField(
                   controller: controller,
                   focusNode: focusNode,
@@ -111,10 +128,25 @@ class _RecordContributionScreenState extends State<RecordContributionScreen> {
                 );
               },
             ),
-            if (_selectedUser != null)
+            if (_selectedUsers.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text('Selected: ${_selectedUser!.name}', style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.only(top: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _selectedUsers.map((user) {
+                    return Chip(
+                      label: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      backgroundColor: AppColors.accent.withValues(alpha: 0.1),
+                      deleteIcon: const Icon(Icons.close, size: 16),
+                      onDeleted: () {
+                        setState(() {
+                          _selectedUsers.removeWhere((u) => u.id == user.id);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
             
             const SizedBox(height: 24),
