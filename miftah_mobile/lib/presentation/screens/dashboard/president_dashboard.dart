@@ -16,6 +16,8 @@ import '../projects/project_list_screen.dart';
 import '../../widgets/app_drawer.dart';
 import 'package:miftah_mobile/core/services/report_service.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class PresidentDashboard extends StatefulWidget {
   const PresidentDashboard({super.key});
@@ -327,27 +329,22 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
 
     final List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text('Update Standard Due', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
+      title: 'Update Standard Due',
+      content: StatefulBuilder(
+        builder: (context, setDialogState) => SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('Specify the new monthly contribution rate and the effective start date.',
                     style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
                 const SizedBox(height: 24),
-                TextField(
+                CustomTextField(
                   controller: amountController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'New Amount (₦)',
-                    prefixIcon: const Icon(Icons.payments_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
+                  label: 'New Amount (₦)',
+                  prefixIcon: Icons.payments_outlined,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
@@ -374,19 +371,17 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (amountController.text.isEmpty) return;
-                provider.updateStandardDue(double.parse(amountController.text), selectedMonth, selectedYear);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Financial Standard updated for $selectedMonth $selectedYear onwards.'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
-              },
-              child: const Text('Save Changes'),
+            SizedBox(
+              width: 140,
+              child: CustomButton(
+                text: 'Save',
+                onPressed: () {
+                  if (amountController.text.isEmpty) return;
+                  provider.updateStandardDue(double.parse(amountController.text), selectedMonth, selectedYear);
+                  Navigator.pop(context);
+                  ToastService.showSuccess(context, 'Financial Standard updated for $selectedMonth $selectedYear onwards.');
+                },
+              ),
             ),
           ],
         ),

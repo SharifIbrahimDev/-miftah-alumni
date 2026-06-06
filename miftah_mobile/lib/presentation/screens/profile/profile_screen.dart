@@ -7,6 +7,7 @@ import 'edit_profile_screen.dart';
 import 'change_password_screen.dart';
 import 'id_card_screen.dart';
 import '../../../core/providers/theme_provider.dart';
+import '../../../core/widgets/custom_widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -16,9 +17,8 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<AuthProvider>().user;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Profile'),
-        elevation: 0,
+      appBar: CustomAppBar(
+        title: 'My Profile',
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
@@ -108,7 +108,9 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ElevatedButton(
+              child: CustomButton(
+                text: 'L O G O U T',
+                color: AppColors.error,
                 onPressed: () async {
                   await context.read<AuthProvider>().logout();
                   if (!context.mounted) return;
@@ -117,11 +119,6 @@ class ProfileScreen extends StatelessWidget {
                     (route) => false,
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.error,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('L O G O U T'),
               ),
             ),
             const SizedBox(height: 24),

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 import '../../providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -46,21 +47,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (authProvider.error == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registration successful! Please log in.'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      ToastService.showSuccess(context, 'Registration successful! Please log in.');
       Navigator.of(context).pop();
     } else {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(authProvider.error ?? 'Registration failed'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, authProvider.error ?? 'Registration failed');
     }
   }
 

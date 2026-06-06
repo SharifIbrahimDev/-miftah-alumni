@@ -8,7 +8,8 @@ import '../../providers/auth_provider.dart';
 import '../../../core/services/notification_service.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/shimmer_list_widget.dart';
-
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
 
@@ -28,12 +29,10 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     final descController = TextEditingController();
     final targetController = TextEditingController();
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Start New Project', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
+      title: 'Start New Project',
+      content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -45,31 +44,30 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
-            onPressed: () async {
-              final success = await context.read<ProjectProvider>().addProject({
-                'title': titleController.text,
-                'description': descController.text,
-                'target_amount': double.parse(targetController.text),
-              });
-              if (success) Navigator.pop(context);
-            },
-            child: const Text('Launch Project'),
+          SizedBox(
+            width: 140,
+            child: CustomButton(
+              text: 'Launch',
+              onPressed: () async {
+                final success = await context.read<ProjectProvider>().addProject({
+                  'title': titleController.text,
+                  'description': descController.text,
+                  'target_amount': double.parse(targetController.text),
+                });
+                if (success && mounted) Navigator.pop(context);
+              },
+            ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   void _showDonationDialog(project) {
     final amountController = TextEditingController();
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Donate to ${project.name}', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
+      title: 'Donate to ${project.name}',
+      content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -84,43 +82,39 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
-            onPressed: () async {
-              if (amountController.text.isEmpty) return;
-              final auth = context.read<AuthProvider>();
-              final success = await context.read<ProjectProvider>().recordContribution(
-                    project.id,
-                    auth.user!.id,
-                    double.parse(amountController.text),
-                  );
-              if (success) {
-                if (!mounted) return;
-                Navigator.pop(context);
-                NotificationService.notifyProjectContribution(project.name, double.parse(amountController.text));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Thank you for your contribution!'), backgroundColor: AppColors.success),
-                );
-              }
-            },
-            child: const Text('Confirm Donation'),
+          SizedBox(
+            width: 140,
+            child: CustomButton(
+              text: 'Donate',
+              onPressed: () async {
+                if (amountController.text.isEmpty) return;
+                final auth = context.read<AuthProvider>();
+                final success = await context.read<ProjectProvider>().recordContribution(
+                      project.id,
+                      auth.user!.id,
+                      double.parse(amountController.text),
+                    );
+                if (success) {
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                  NotificationService.notifyProjectContribution(project.name, double.parse(amountController.text));
+                  ToastService.showSuccess(context, 'Thank you for your contribution!');
+                }
+              },
+            ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
+      child: CustomTextField(
         controller: controller,
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: 20),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+        label: label,
+        prefixIcon: icon,
       ),
     );
   }
@@ -131,8 +125,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Ongoing Projects'),
+      appBar: CustomAppBar(
+        title: 'Ongoing Projects',
         actions: [
           if (auth.user?.isPresident == true)
             IconButton(
@@ -258,14 +252,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                   Text('₦${project.raisedAmount.toStringAsFixed(0)}', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.success)),
                                 ],
                               ),
-                              ElevatedButton(
-                                onPressed: () => _showDonationDialog(project),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.accent,
-                                  minimumSize: const Size(120, 44),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              SizedBox(
+                                width: 120,
+                                child: CustomButton(
+                                  text: 'DONATE',
+                                  color: AppColors.accent,
+                                  onPressed: () => _showDonationDialog(project),
                                 ),
-                                child: const Text('DONATE', style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ],
                           ),

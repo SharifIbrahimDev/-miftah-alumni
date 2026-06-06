@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../widgets/empty_state_widget.dart';
 
 class MonthlyContributionScreen extends StatefulWidget {
   const MonthlyContributionScreen({super.key});
@@ -27,24 +29,39 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
     final amountController = TextEditingController(text: '2500');
     final monthController = TextEditingController(text: DateFormat('MMMM yyyy').format(DateTime.now()));
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Record Payment', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDialogField(monthController, 'Contribution Month', Icons.calendar_month_outlined),
-              _buildDialogField(amountController, 'Amount (₦)', Icons.payments_outlined, isNumber: true),
-            ],
-          ),
+      title: 'Record Payment',
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: CustomTextField(
+                controller: monthController,
+                label: 'Contribution Month',
+                prefixIcon: Icons.calendar_month_outlined,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: CustomTextField(
+                controller: amountController,
+                label: 'Amount (₦)',
+                prefixIcon: Icons.payments_outlined,
+                keyboardType: TextInputType.number,
+              ),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        SizedBox(
+          width: 140,
+          child: CustomButton(
+            text: 'Record Now',
             onPressed: () async {
               final auth = context.read<AuthProvider>();
               final success = await context.read<ContributionProvider>().recordContribution(
@@ -58,27 +75,13 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                 context.read<ContributionProvider>().fetchMyContributions();
               }
             },
-            child: const Text('Record Now'),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: 20),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +90,8 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Monthly Ledger'),
+      appBar: const CustomAppBar(
+        title: 'Monthly Ledger',
       ),
       floatingActionButton: canRecord
           ? FloatingActionButton.extended(
@@ -232,18 +235,10 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.history_edu_rounded, size: 64, color: AppColors.textSecondary.withOpacity(0.2))
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .moveY(begin: -5, end: 5, duration: 2.seconds)
-              .shimmer(duration: 2.seconds),
-          const SizedBox(height: 16),
-          Text('No records found for this year.', style: TextStyle(color: AppColors.textSecondary)),
-        ],
-      ),
+    return const EmptyStateWidget(
+      icon: Icons.history_edu_rounded,
+      title: 'No records',
+      subtitle: 'No records found for this year.',
     );
   }
 }

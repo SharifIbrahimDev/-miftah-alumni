@@ -10,6 +10,8 @@ import '../profile/profile_screen.dart';
 import 'package:intl/intl.dart';
 import '../../widgets/app_drawer.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class CashierDashboard extends StatefulWidget {
   const CashierDashboard({super.key});
@@ -83,13 +85,11 @@ class _CashierDashboardState extends State<CashierDashboard> {
 
     monthController.addListener(() => updateDefaultAmount(monthController.text));
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text('Record Monthly Due', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
+      title: 'Record Monthly Due',
+      content: StatefulBuilder(
+        builder: (context, setDialogState) => SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -116,24 +116,25 @@ class _CashierDashboardState extends State<CashierDashboard> {
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () async {
-                if (selectedUserId == null) return;
-                final success = await context.read<ContributionProvider>().recordContribution(
-                      selectedUserId!,
-                      double.parse(amountController.text),
-                      monthController.text,
-                      'paid',
-                    );
-                if (success) {
-                  if (!mounted) return;
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Payment recorded successfully!'), backgroundColor: AppColors.success),
-                  );
-                }
-              },
-              child: const Text('Confirm Payment'),
+            SizedBox(
+              width: 140,
+              child: CustomButton(
+                text: 'Confirm',
+                onPressed: () async {
+                  if (selectedUserId == null) return;
+                  final success = await context.read<ContributionProvider>().recordContribution(
+                        selectedUserId!,
+                        double.parse(amountController.text),
+                        monthController.text,
+                        'paid',
+                      );
+                  if (success) {
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    ToastService.showSuccess(context, 'Payment recorded successfully!');
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -146,13 +147,11 @@ class _CashierDashboardState extends State<CashierDashboard> {
     final descController = TextEditingController();
     String selectedCategory = 'General';
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text('Record New Expense', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
+      title: 'Record New Expense',
+      content: StatefulBuilder(
+        builder: (context, setDialogState) => SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -173,24 +172,25 @@ class _CashierDashboardState extends State<CashierDashboard> {
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-              onPressed: () async {
-                if (amountController.text.isEmpty) return;
-                final success = await context.read<ContributionProvider>().recordExpense(
-                      descController.text,
-                      double.parse(amountController.text),
-                      selectedCategory,
-                    );
-                if (success) {
-                  if (!mounted) return;
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Expense recorded successfully!'), backgroundColor: AppColors.error),
-                  );
-                }
-              },
-              child: const Text('Confirm Expense', style: TextStyle(color: Colors.white)),
+            SizedBox(
+              width: 140,
+              child: CustomButton(
+                text: 'Confirm',
+                color: AppColors.error,
+                onPressed: () async {
+                  if (amountController.text.isEmpty) return;
+                  final success = await context.read<ContributionProvider>().recordExpense(
+                        descController.text,
+                        double.parse(amountController.text),
+                        selectedCategory,
+                      );
+                  if (success) {
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    ToastService.showError(context, 'Expense recorded successfully!');
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -198,17 +198,13 @@ class _CashierDashboardState extends State<CashierDashboard> {
     );
   }
 
-  Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
+      child: CustomTextField(
         controller: controller,
         keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: 20),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+        label: label,
+        prefixIcon: icon,
       ),
     );
   }
@@ -477,9 +473,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
                         );
                     if (success) {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Marketed ₦${amount.toStringAsFixed(0)} for ${user.name}'), backgroundColor: AppColors.success),
-                      );
+                      ToastService.showSuccess(context, 'Collected ₦${amount.toStringAsFixed(0)} for ${user.name}');
                     }
                   },
                   child: Container(

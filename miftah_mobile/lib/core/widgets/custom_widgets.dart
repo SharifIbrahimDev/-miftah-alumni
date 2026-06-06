@@ -11,6 +11,8 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
+  final void Function(String)? onChanged;
+  final bool readOnly;
 
   const CustomTextField({
     super.key,
@@ -22,6 +24,8 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.prefixIcon,
     this.suffixIcon,
+    this.onChanged,
+    this.readOnly = false,
   });
 
   @override
@@ -44,8 +48,10 @@ class CustomTextField extends StatelessWidget {
         TextFormField(
           controller: controller,
           obscureText: isPassword,
+          readOnly: readOnly,
           keyboardType: keyboardType,
           validator: validator,
+          onChanged: onChanged,
           style: GoogleFonts.inter(fontSize: 16, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
           decoration: InputDecoration(
             hintText: hint,
@@ -125,6 +131,64 @@ class CustomButton extends StatelessWidget {
                   letterSpacing: 2,
                 ),
               ),
+      ),
+    );
+  }
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final bool centerTitle;
+  final Color? backgroundColor;
+
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.actions,
+    this.leading,
+    this.centerTitle = false,
+    this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(
+        title,
+        style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+      ),
+      centerTitle: centerTitle,
+      actions: actions,
+      leading: leading,
+      backgroundColor: backgroundColor,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class CustomDialogBox {
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required String title,
+    required Widget content,
+    List<Widget>? actions,
+    bool barrierDismissible = true,
+  }) {
+    return showDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          title,
+          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+        ),
+        content: content,
+        actions: actions,
       ),
     );
   }

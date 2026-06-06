@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flip_card/flip_card.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../../core/widgets/custom_widgets.dart';
 
 class IdCardScreen extends StatelessWidget {
   const IdCardScreen({super.key});
@@ -15,9 +16,8 @@ class IdCardScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Digital Alumni ID'),
-        elevation: 0,
+      appBar: const CustomAppBar(
+        title: 'Digital Alumni ID',
       ),
       body: Center(
         child: SingleChildScrollView(

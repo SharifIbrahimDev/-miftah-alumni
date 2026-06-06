@@ -12,6 +12,8 @@ import '../profile/profile_screen.dart';
 import '../users/user_list_screen.dart';
 import '../../widgets/app_drawer.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class RegistrarDashboard extends StatefulWidget {
   const RegistrarDashboard({super.key});
@@ -91,12 +93,10 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
     final emailController = TextEditingController();
     final phoneController = TextEditingController();
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('New Member Enrollment', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
+      title: 'New Member Enrollment',
+      content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -108,41 +108,37 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(minimumSize: const Size(120, 48)),
-            onPressed: () async {
-              if (nameController.text.isEmpty || emailController.text.isEmpty) return;
-              final success = await context.read<UserProvider>().addUser({
-                'name': nameController.text,
-                'email': emailController.text,
-                'phone': phoneController.text,
-                'role': 'member',
-              });
-              if (success) {
-                if (!mounted) return;
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Member registered successfully!'), backgroundColor: AppColors.success),
-                );
-              }
-            },
-            child: const Text('Register Member'),
+          SizedBox(
+            width: 140,
+            child: CustomButton(
+              text: 'Register',
+              onPressed: () async {
+                if (nameController.text.isEmpty || emailController.text.isEmpty) return;
+                final success = await context.read<UserProvider>().addUser({
+                  'name': nameController.text,
+                  'email': emailController.text,
+                  'phone': phoneController.text,
+                  'role': 'member',
+                });
+                if (success) {
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                  ToastService.showSuccess(context, 'Member registered successfully!');
+                }
+              },
+            ),
           ),
         ],
-      ),
+      );
     );
   }
 
-  Widget _buildDialogField(TextEditingController controller, String label, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
+      child: CustomTextField(
         controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: 20),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+        label: label,
+        prefixIcon: icon,
       ),
     );
   }

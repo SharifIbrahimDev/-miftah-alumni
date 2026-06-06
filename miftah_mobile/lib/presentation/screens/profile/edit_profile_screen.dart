@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -45,15 +47,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
+          ToastService.showSuccess(context, 'Profile updated successfully');
           Navigator.pop(context);
         } else {
           final error = context.read<AuthProvider>().error;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error ?? 'Failed to update profile'), backgroundColor: Colors.red),
-          );
+          ToastService.showError(context, error ?? 'Failed to update profile');
         }
       }
     }
@@ -64,8 +62,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
+      appBar: const CustomAppBar(
+        title: 'Edit Profile',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -74,34 +72,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
+                label: 'Full Name',
+                prefixIcon: Icons.person_outline,
                 validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              CustomTextField(
                 controller: _emailController,
                 readOnly: true,
-                style: const TextStyle(color: Colors.grey),
-                decoration: InputDecoration(
-                  labelText: 'Email Address (Locked)',
-                  prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                ),
+                label: 'Email Address (Locked)',
+                prefixIcon: Icons.email_outlined,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              CustomTextField(
                 controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  prefixIcon: Icon(Icons.phone_outlined),
-                ),
+                label: 'Phone Number',
+                prefixIcon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
@@ -118,15 +106,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onChanged: (value) => setState(() => _gender = value!),
               ),
               const SizedBox(height: 48),
-              ElevatedButton(
-                onPressed: isLoading ? null : _saveProfile,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('S A V E  C H A N G E S'),
+              CustomButton(
+                text: 'S A V E  C H A N G E S',
+                isLoading: isLoading,
+                onPressed: _saveProfile,
               ),
             ],
           ),

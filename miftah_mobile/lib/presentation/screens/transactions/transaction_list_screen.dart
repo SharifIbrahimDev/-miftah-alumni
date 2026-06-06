@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/custom_widgets.dart';
 import '../../providers/contribution_provider.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../../core/widgets/glass_card.dart';
@@ -15,8 +16,8 @@ class TransactionListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text('Financial Audit Trail', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+      appBar: const CustomAppBar(
+        title: 'Financial Audit Trail',
       ),
       body: Consumer<ContributionProvider>(
         builder: (context, provider, _) {

@@ -7,6 +7,8 @@ import '../../providers/user_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/shimmer_list_widget.dart';
 import 'add_member_screen.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
@@ -27,43 +29,41 @@ class _UserListScreenState extends State<UserListScreen> {
   void _showEditRoleDialog(user) {
     String selectedRole = user.role;
 
-    showDialog(
+    CustomDialogBox.show(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text('Change Role for ${user.name}', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          content: DropdownButtonFormField<String>(
-            value: selectedRole,
-            decoration: InputDecoration(
-              labelText: 'Assign Role',
-              filled: true,
-              fillColor: AppColors.surfaceVariant,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-            ),
-            onChanged: (val) => setDialogState(() => selectedRole = val!),
-            items: ['member', 'cashier', 'registrar']
-                .map((role) => DropdownMenuItem(value: role, child: Text(role.toUpperCase())))
-                .toList(),
+      title: 'Change Role for ${user.name}',
+      content: StatefulBuilder(
+        builder: (context, setDialogState) => DropdownButtonFormField<String>(
+          value: selectedRole,
+          decoration: InputDecoration(
+            labelText: 'Assign Role',
+            filled: true,
+            fillColor: AppColors.surfaceVariant,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () async {
-                final success = await context.read<UserProvider>().updateUserRole(user.id, selectedRole);
-                if (success) {
-                  if (!mounted) return;
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Role updated successfully'), backgroundColor: AppColors.success),
-                  );
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
+          onChanged: (val) => setDialogState(() => selectedRole = val!),
+          items: ['member', 'cashier', 'registrar']
+              .map((role) => DropdownMenuItem(value: role, child: Text(role.toUpperCase())))
+              .toList(),
         ),
       ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        SizedBox(
+          width: 120,
+          child: CustomButton(
+            text: 'Save',
+            onPressed: () async {
+              final success = await context.read<UserProvider>().updateUserRole(user.id, selectedRole);
+              if (success) {
+                if (!mounted) return;
+                Navigator.pop(context);
+                ToastService.showSuccess(context, 'Role updated successfully');
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -71,8 +71,8 @@ class _UserListScreenState extends State<UserListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Member Directory'),
+      appBar: CustomAppBar(
+        title: 'Member Directory',
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add_alt_1),
@@ -101,16 +101,15 @@ class _UserListScreenState extends State<UserListScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: TextField(
+                child: CustomTextField(
                   controller: _searchController,
+                  label: 'Search Members',
+                  hint: 'Search by name or email...',
                   onChanged: (val) => setState(() {}),
-                  decoration: InputDecoration(
-                    hintText: 'Search members...',
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    suffixIcon: _searchController.text.isNotEmpty 
-                        ? IconButton(icon: const Icon(Icons.close), onPressed: () { _searchController.clear(); setState(() {}); })
-                        : null,
-                  ),
+                  prefixIcon: Icons.search_rounded,
+                  suffixIcon: _searchController.text.isNotEmpty 
+                      ? IconButton(icon: const Icon(Icons.close), onPressed: () { _searchController.clear(); setState(() {}); })
+                      : null,
                 ),
               ),
               Expanded(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -34,15 +36,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
       if (mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password changed successfully')),
-          );
+          ToastService.showSuccess(context, 'Password changed successfully');
           Navigator.pop(context);
         } else {
           final error = context.read<AuthProvider>().error;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error ?? 'Failed to change password'), backgroundColor: Colors.red),
-          );
+          ToastService.showError(context, error ?? 'Failed to change password');
         }
       }
     }
@@ -53,8 +51,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Change Password'),
+      appBar: const CustomAppBar(
+        title: 'Change Password',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -77,23 +75,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 32),
-              TextFormField(
+              CustomTextField(
                 controller: _oldPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Current Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                ),
-                obscureText: true,
+                label: 'Current Password',
+                prefixIcon: Icons.lock_outline,
+                isPassword: true,
                 validator: (value) => value == null || value.isEmpty ? 'Please enter your current password' : null,
               ),
               const SizedBox(height: 24),
-              TextFormField(
+              CustomTextField(
                 controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  prefixIcon: Icon(Icons.lock_reset_outlined),
-                ),
-                obscureText: true,
+                label: 'New Password',
+                prefixIcon: Icons.lock_reset_outlined,
+                isPassword: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Please enter a new password';
                   if (value.length < 6) return 'Password must be at least 6 characters';
@@ -101,28 +95,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              TextFormField(
+              CustomTextField(
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
-                  prefixIcon: Icon(Icons.check_circle_outline),
-                ),
-                obscureText: true,
+                label: 'Confirm New Password',
+                prefixIcon: Icons.check_circle_outline,
+                isPassword: true,
                 validator: (value) {
                   if (value != _passwordController.text) return 'Passwords do not match';
                   return null;
                 },
               ),
               const SizedBox(height: 48),
-              ElevatedButton(
-                onPressed: isLoading ? null : _changePassword,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text('C H A N G E  P A S S W O R D'),
+              CustomButton(
+                text: 'C H A N G E  P A S S W O R D',
+                isLoading: isLoading,
+                onPressed: _changePassword,
               ),
             ],
           ),
