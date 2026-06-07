@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/contribution_provider.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/shimmer_list_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
@@ -28,6 +29,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   void _showDonationDialog(project) {
+    final amountController = TextEditingController();
     CustomDialogBox.show(
       context: context,
       title: 'Support ${project.name}',
@@ -37,7 +39,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Please transfer your contribution to the account below. Contact a Cashier to verify and record your donation.',
+              'Please transfer your contribution to the account below, then submit a claim. Your record will update once the Cashier approves it.',
               style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
             ),
             const SizedBox(height: 24),
@@ -82,15 +84,37 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            CustomTextField(
+              controller: amountController,
+              label: 'Amount Donated (₦)',
+              keyboardType: TextInputType.number,
+              prefixIcon: Icons.payments_outlined,
+            ),
           ],
         ),
       ),
       actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
         SizedBox(
-          width: double.infinity,
+          width: 150,
           child: CustomButton(
-            text: 'Close',
-            onPressed: () => Navigator.pop(context),
+            text: 'Submit Claim',
+            onPressed: () async {
+              if (amountController.text.isEmpty) return;
+              final auth = context.read<AuthProvider>();
+              final success = await context.read<ContributionProvider>().submitClaim(
+                    auth.user!.id,
+                    double.parse(amountController.text),
+                    'project',
+                    project.id.toString(),
+                  );
+              if (success) {
+                if (!mounted) return;
+                Navigator.pop(context);
+                ToastService.showSuccess(context, 'Claim submitted! Awaiting Cashier approval.');
+              }
+            },
           ),
         ),
       ],

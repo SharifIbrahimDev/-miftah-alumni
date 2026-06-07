@@ -13,6 +13,7 @@ import '../../widgets/empty_state_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/utils/toast_service.dart';
 import '../contributions/record_project_contribution_screen.dart';
+import '../contributions/pending_claims_screen.dart';
 
 class CashierDashboard extends StatefulWidget {
   const CashierDashboard({super.key});
@@ -28,6 +29,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
     Future.microtask(() {
       context.read<ContributionProvider>().fetchAllContributions();
       context.read<ContributionProvider>().fetchExpenses();
+      context.read<ContributionProvider>().fetchPendingClaims();
       context.read<UserProvider>().fetchUsers(); // For member selection in dialogs
     });
   }
@@ -325,7 +327,13 @@ class _CashierDashboardState extends State<CashierDashboard> {
               () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RecordProjectContributionScreen())),
             ),
             const SizedBox(width: 16),
-            const Spacer(), // Placeholder for future actions to keep grid balanced
+            _buildActionTile(
+              context,
+              'Pending Claims',
+              Icons.assignment_turned_in_outlined,
+              AppColors.success,
+              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PendingClaimsScreen())),
+            ),
           ],
         ),
       ],

@@ -126,3 +126,38 @@ class ProjectContribution {
     );
   }
 }
+
+class PaymentClaim {
+  final int id;
+  final int userId;
+  final String userName;
+  final double amount;
+  final String type; // 'monthly' or 'project'
+  final String referenceId; // month (e.g. 'JAN 2026') or projectId
+  final String status; // 'pending', 'approved', 'rejected'
+  final DateTime createdAt;
+
+  PaymentClaim({
+    required this.id,
+    required this.userId,
+    required this.userName,
+    required this.amount,
+    required this.type,
+    required this.referenceId,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory PaymentClaim.fromJson(Map<String, dynamic> json) {
+    return PaymentClaim(
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      userName: json['user']?['name'] ?? 'Unknown User',
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0,
+      type: json['type'] ?? 'monthly',
+      referenceId: json['reference_id']?.toString() ?? '',
+      status: json['status'] ?? 'pending',
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+    );
+  }
+}

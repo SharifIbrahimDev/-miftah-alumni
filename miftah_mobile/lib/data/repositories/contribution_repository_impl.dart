@@ -54,4 +54,30 @@ class ContributionRepository {
     });
     return response.statusCode == 201;
   }
+
+  Future<List<PaymentClaim>> getPendingClaims() async {
+    final response = await remoteDataSource.get('/payment-claims');
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.map((json) => PaymentClaim.fromJson(json)).where((c) => c.status == 'pending').toList();
+    }
+    return [];
+  }
+
+  Future<bool> submitClaim(int userId, double amount, String type, String referenceId) async {
+    final response = await remoteDataSource.post('/payment-claims', {
+      'user_id': userId,
+      'amount': amount,
+      'type': type,
+      'reference_id': referenceId,
+    });
+    return response.statusCode == 201;
+  }
+
+  Future<bool> updateClaimStatus(int claimId, String status) async {
+    final response = await remoteDataSource.put('/payment-claims/$claimId', {
+      'status': status,
+    });
+    return response.statusCode == 200;
+  }
 }

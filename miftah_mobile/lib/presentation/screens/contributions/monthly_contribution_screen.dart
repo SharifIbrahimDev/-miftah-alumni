@@ -121,7 +121,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                         border: Border.all(color: AppColors.surfaceVariant),
                       ),
                       child: ListTile(
-                        onTap: isPaid ? null : _showPaymentInfoDialog,
+                        onTap: isPaid ? null : () => _showPaymentInfoDialog(contribution),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                         leading: Container(
                           padding: const EdgeInsets.all(10),
@@ -228,7 +228,8 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
     );
   }
 
-  void _showPaymentInfoDialog() {
+  void _showPaymentInfoDialog(MonthlyContribution contribution) {
+    final amountController = TextEditingController(text: contribution.amount.toStringAsFixed(0));
     CustomDialogBox.show(
       context: context,
       title: 'Pay Monthly Dues',
@@ -238,7 +239,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Please transfer your monthly dues to the account below. Contact a Cashier to verify and record your payment.',
+              'Please transfer your monthly dues to the account below, then submit a claim. Your record will update once the Cashier approves it.',
               style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
             ),
             const SizedBox(height: 24),
@@ -283,15 +284,37 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            CustomTextField(
+              controller: amountController,
+              label: 'Amount Paid (₦)',
+              keyboardType: TextInputType.number,
+              prefixIcon: Icons.payments_outlined,
+            ),
           ],
         ),
       ),
       actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
         SizedBox(
-          width: double.infinity,
+          width: 150,
           child: CustomButton(
-            text: 'Close',
-            onPressed: () => Navigator.pop(context),
+            text: 'Submit Claim',
+            onPressed: () async {
+              if (amountController.text.isEmpty) return;
+              final auth = context.read<AuthProvider>();
+              final success = await context.read<ContributionProvider>().submitClaim(
+                    auth.user!.id,
+                    double.parse(amountController.text),
+                    'monthly',
+                    contribution.month,
+                  );
+              if (success) {
+                if (!mounted) return;
+                Navigator.pop(context);
+                ToastService.showSuccess(context, 'Claim submitted! Awaiting Cashier approval.');
+              }
+            },
           ),
         ),
       ],
