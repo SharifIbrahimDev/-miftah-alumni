@@ -10,6 +10,8 @@ import '../../widgets/empty_state_widget.dart';
 import '../../widgets/shimmer_list_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/utils/toast_service.dart';
+import 'create_project_screen.dart';
+
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
 
@@ -22,44 +24,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   void initState() {
     super.initState();
     Future.microtask(() => context.read<ProjectProvider>().fetchProjects());
-  }
-
-  void _showAddProjectDialog() {
-    final titleController = TextEditingController();
-    final descController = TextEditingController();
-    final targetController = TextEditingController();
-
-    CustomDialogBox.show(
-      context: context,
-      title: 'Start New Project',
-      content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDialogField(titleController, 'Project Title', Icons.campaign_outlined),
-              _buildDialogField(descController, 'Description', Icons.description_outlined),
-              _buildDialogField(targetController, 'Target Amount (₦)', Icons.payments_outlined, isNumber: true),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          SizedBox(
-            width: 140,
-            child: CustomButton(
-              text: 'Launch',
-              onPressed: () async {
-                final success = await context.read<ProjectProvider>().addProject({
-                  'title': titleController.text,
-                  'description': descController.text,
-                  'target_amount': double.parse(targetController.text),
-                });
-                if (success && mounted) Navigator.pop(context);
-              },
-            ),
-          ),
-        ],
-      );
   }
 
   void _showDonationDialog(project) {
@@ -125,17 +89,23 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Ongoing Projects',
-        actions: [
-          if (auth.user?.isPresident == true)
-            IconButton(
-              icon: const Icon(Icons.add_task_rounded),
-              onPressed: _showAddProjectDialog,
-            ),
-          const SizedBox(width: 8),
-        ],
       ),
+      floatingActionButton: auth.user?.isPresident == true
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CreateProjectScreen()),
+                );
+              },
+              backgroundColor: AppColors.accent,
+              foregroundColor: Colors.white,
+              label: const Text('Launch Campaign', style: TextStyle(fontWeight: FontWeight.bold)),
+              icon: const Icon(Icons.rocket_launch_rounded),
+            )
+          : null,
       body: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
