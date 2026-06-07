@@ -40,5 +40,9 @@ class ProjectProvider extends ChangeNotifier {
     notifyListeners();
     return success;
   }
+
+  Future<List<ProjectContribution>> getProjectContributions(int projectId) async {
+    return await repo.getProjectContributions(projectId);
+  }
 }
 

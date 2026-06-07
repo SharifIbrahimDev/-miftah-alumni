@@ -11,6 +11,7 @@ import '../../widgets/shimmer_list_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/utils/toast_service.dart';
 import 'create_project_screen.dart';
+import 'project_detail_screen.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -143,11 +144,19 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                     BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8)),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      height: 140,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => ProjectDetailScreen(project: project)),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        height: 140,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [AppColors.primary, Color(0xFF023E23)],
@@ -247,13 +256,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(duration: 500.ms, delay: (index * 100).ms).slideY(begin: 0.2, curve: Curves.easeOutQuint);
-            },
-          ),
-        );
-        },
-      ),
-    );
+              ),
+            ).animate().fadeIn(duration: 500.ms, delay: (index * 100).ms).slideY(begin: 0.2, curve: Curves.easeOutQuint);
+          },
+        ),
+      );
+      },
+    ),
+  );
   }
 }
-

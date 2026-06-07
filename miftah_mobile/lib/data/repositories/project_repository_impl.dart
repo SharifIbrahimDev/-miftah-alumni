@@ -33,5 +33,18 @@ class ProjectRepository {
     });
     return response.statusCode == 201;
   }
+
+  Future<List<ProjectContribution>> getProjectContributions(int projectId) async {
+    try {
+      final response = await remoteDataSource.get('/projects/$projectId/contributions');
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((json) => ProjectContribution.fromJson(json)).toList();
+      }
+    } catch (e) {
+      // Ignore errors for now if endpoint doesn't exist
+    }
+    return [];
+  }
 }
 

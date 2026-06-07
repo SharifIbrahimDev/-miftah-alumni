@@ -12,6 +12,7 @@ import '../../widgets/app_drawer.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/utils/toast_service.dart';
+import '../contributions/record_project_contribution_screen.dart';
 
 class CashierDashboard extends StatefulWidget {
   const CashierDashboard({super.key});
@@ -292,22 +293,40 @@ class _CashierDashboardState extends State<CashierDashboard> {
   }
 
   Widget _buildQuickActions(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        _buildActionTile(
-          context,
-          'Record Month Due',
-          Icons.calendar_today_rounded,
-          AppColors.primary,
-          _showRecordDueDialog,
+        Row(
+          children: [
+            _buildActionTile(
+              context,
+              'Record Month Due',
+              Icons.calendar_today_rounded,
+              AppColors.primary,
+              _showRecordDueDialog,
+            ),
+            const SizedBox(width: 16),
+            _buildActionTile(
+              context,
+              'New Expense',
+              Icons.payments_outlined,
+              AppColors.error,
+              _showNewExpenseDialog,
+            ),
+          ],
         ),
-        const SizedBox(width: 16),
-        _buildActionTile(
-          context,
-          'New Expense',
-          Icons.payments_outlined,
-          AppColors.error,
-          _showNewExpenseDialog,
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            _buildActionTile(
+              context,
+              'Project Donation',
+              Icons.rocket_launch_rounded,
+              AppColors.accent,
+              () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RecordProjectContributionScreen())),
+            ),
+            const SizedBox(width: 16),
+            const Spacer(), // Placeholder for future actions to keep grid balanced
+          ],
         ),
       ],
     );

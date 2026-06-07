@@ -97,3 +97,32 @@ class Expense {
     );
   }
 }
+
+class ProjectContribution {
+  final int id;
+  final int projectId;
+  final int userId;
+  final String userName;
+  final double amount;
+  final DateTime createdAt;
+
+  ProjectContribution({
+    required this.id,
+    required this.projectId,
+    required this.userId,
+    required this.userName,
+    required this.amount,
+    required this.createdAt,
+  });
+
+  factory ProjectContribution.fromJson(Map<String, dynamic> json) {
+    return ProjectContribution(
+      id: json['id'] ?? 0,
+      projectId: json['project_id'] ?? 0,
+      userId: json['user_id'] ?? 0,
+      userName: json['user']?['name'] ?? 'Unknown User',
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+    );
+  }
+}
