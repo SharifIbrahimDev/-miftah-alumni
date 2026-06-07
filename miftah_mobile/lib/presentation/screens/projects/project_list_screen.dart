@@ -5,11 +5,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../../core/services/notification_service.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/shimmer_list_widget.dart';
 import '../../../core/widgets/custom_widgets.dart';
-import '../../../core/utils/toast_service.dart';
 import 'create_project_screen.dart';
 import 'project_detail_screen.dart';
 
@@ -28,59 +26,55 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   void _showDonationDialog(project) {
-    final amountController = TextEditingController();
     CustomDialogBox.show(
       context: context,
-      title: 'Donate to ${project.name}',
+      title: 'Support ${project.name}',
       content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Enter the amount you wish to contribute to this project.',
-                style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Please transfer your contribution to the account below. Contact a Cashier to verify and record your donation.',
+              style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.surfaceVariant),
               ),
-              const SizedBox(height: 24),
-              _buildDialogField(amountController, 'Amount (₦)', Icons.payments_outlined, isNumber: true),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('BANK NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('OPAY', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  const Text('ACCOUNT NUMBER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('8061909049', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 2)),
+                  const SizedBox(height: 16),
+                  const Text('ACCOUNT NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('ALIYU AHMAD', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: CustomButton(
+            text: 'Close',
+            onPressed: () => Navigator.pop(context),
           ),
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          SizedBox(
-            width: 140,
-            child: CustomButton(
-              text: 'Donate',
-              onPressed: () async {
-                if (amountController.text.isEmpty) return;
-                final auth = context.read<AuthProvider>();
-                final success = await context.read<ProjectProvider>().recordContribution(
-                      project.id,
-                      auth.user!.id,
-                      double.parse(amountController.text),
-                    );
-                if (success) {
-                  if (!mounted) return;
-                  Navigator.pop(context);
-                  NotificationService.notifyProjectContribution(project.name, double.parse(amountController.text));
-                  ToastService.showSuccess(context, 'Thank you for your contribution!');
-                }
-              },
-            ),
-          ),
-        ],
-      );
-  }
-
-  Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: CustomTextField(
-        controller: controller,
-        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-        label: label,
-        prefixIcon: icon,
-      ),
+      ],
     );
   }
 
