@@ -119,11 +119,12 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                         border: Border.all(color: AppColors.surfaceVariant),
                       ),
                       child: ListTile(
+                        onTap: isPaid ? null : _showPaymentInfoDialog,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                         leading: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.1),
+                            color: (isPaid ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -135,7 +136,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                           isAllRecords ? '${contribution.userName} - ${contribution.month}' : contribution.month,
                           style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                        subtitle: Text(isPaid ? 'Payment Verified' : 'Awaiting Payment', style: const TextStyle(fontSize: 12)),
+                        subtitle: Text(isPaid ? 'Payment Verified' : 'Awaiting Payment - Tap to pay', style: const TextStyle(fontSize: 12)),
                         trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -155,7 +156,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1,
-                                color: (isPaid ? AppColors.success : AppColors.error).withOpacity(0.7),
+                                color: (isPaid ? AppColors.success : AppColors.error).withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -185,7 +186,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
       ),
       child: Column(
         children: [
-          Text('TOTAL CONTRIBUTED IN $_selectedYear', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11, letterSpacing: 1)),
+          Text('TOTAL CONTRIBUTED IN $_selectedYear', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11, letterSpacing: 1)),
           const SizedBox(height: 8),
           Text(
             '₦${total.toStringAsFixed(0)}',
@@ -222,6 +223,59 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
       icon: Icons.history_edu_rounded,
       title: 'No records',
       subtitle: 'No records found for this year.',
+    );
+  }
+
+  void _showPaymentInfoDialog() {
+    CustomDialogBox.show(
+      context: context,
+      title: 'Pay Monthly Dues',
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Please transfer your monthly dues to the account below. Contact a Cashier to verify and record your payment.',
+              style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.surfaceVariant),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('BANK NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('OPAY', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  const Text('ACCOUNT NUMBER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('8061909049', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 2)),
+                  const SizedBox(height: 16),
+                  const Text('ACCOUNT NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                  const SizedBox(height: 4),
+                  const Text('ALIYU AHMAD', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: CustomButton(
+            text: 'Close',
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+      ],
     );
   }
 }
