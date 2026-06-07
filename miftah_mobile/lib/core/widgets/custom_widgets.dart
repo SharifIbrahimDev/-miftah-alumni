@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final void Function(String)? onChanged;
   final bool readOnly;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -26,6 +27,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.onChanged,
     this.readOnly = false,
+    this.focusNode,
   });
 
   @override
@@ -52,6 +54,7 @@ class CustomTextField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           onChanged: onChanged,
+          focusNode: focusNode,
           style: GoogleFonts.inter(fontSize: 16, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
           decoration: InputDecoration(
             hintText: hint,
@@ -142,6 +145,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final bool centerTitle;
   final Color? backgroundColor;
+  final PreferredSizeWidget? bottom;
 
   const CustomAppBar({
     super.key,
@@ -150,6 +154,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.centerTitle = false,
     this.backgroundColor,
+    this.bottom,
   });
 
   @override
@@ -162,12 +167,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: centerTitle,
       actions: actions,
       leading: leading,
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor ?? AppColors.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      bottom: bottom,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(
+        kToolbarHeight + (bottom?.preferredSize.height ?? 0.0),
+      );
 }
 
 class CustomDialogBox {

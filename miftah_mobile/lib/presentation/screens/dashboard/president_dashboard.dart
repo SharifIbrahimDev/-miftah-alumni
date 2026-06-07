@@ -369,7 +369,8 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               ],
             ),
           ),
-          actions: [
+      ),
+      actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
             SizedBox(
               width: 140,
@@ -384,8 +385,6 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 

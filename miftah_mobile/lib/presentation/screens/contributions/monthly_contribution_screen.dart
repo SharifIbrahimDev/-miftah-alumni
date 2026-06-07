@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../../domain/entities/contribution.dart';
 import '../../../core/widgets/custom_widgets.dart';
 import '../../../core/utils/toast_service.dart';
 import '../../widgets/empty_state_widget.dart';

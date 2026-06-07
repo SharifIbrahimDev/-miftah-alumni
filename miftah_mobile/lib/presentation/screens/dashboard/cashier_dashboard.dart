@@ -117,7 +117,8 @@ class _CashierDashboardState extends State<CashierDashboard> {
               ],
             ),
           ),
-          actions: [
+      ),
+      actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
             SizedBox(
               width: 140,
@@ -140,8 +141,6 @@ class _CashierDashboardState extends State<CashierDashboard> {
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 
@@ -173,7 +172,8 @@ class _CashierDashboardState extends State<CashierDashboard> {
               ],
             ),
           ),
-          actions: [
+      ),
+      actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
             SizedBox(
               width: 140,
@@ -196,8 +196,6 @@ class _CashierDashboardState extends State<CashierDashboard> {
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 
