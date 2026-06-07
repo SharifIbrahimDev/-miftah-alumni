@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/utils/toast_service.dart';
 import '../../widgets/empty_state_widget.dart';
 import 'record_contribution_screen.dart';
 
@@ -256,7 +258,24 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                   const SizedBox(height: 16),
                   const Text('ACCOUNT NUMBER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
                   const SizedBox(height: 4),
-                  const Text('8061909049', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 2)),
+                  InkWell(
+                    onTap: () {
+                      Clipboard.setData(const ClipboardData(text: '8061909049'));
+                      ToastService.showSuccess(context, 'Account number copied!');
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('8061909049', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 2)),
+                          const SizedBox(width: 8),
+                          Icon(Icons.copy_rounded, size: 16, color: AppColors.primary.withValues(alpha: 0.7)),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   const Text('ACCOUNT NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
                   const SizedBox(height: 4),
