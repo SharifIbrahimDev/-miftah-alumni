@@ -201,6 +201,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
     );
   }
 
+  Widget _buildDialogField(TextEditingController controller, String label, IconData icon, {bool isNumber = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: CustomTextField(

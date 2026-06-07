@@ -133,6 +133,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
     );
   }
 
+  Widget _buildDialogField(TextEditingController controller, String label, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: CustomTextField(
