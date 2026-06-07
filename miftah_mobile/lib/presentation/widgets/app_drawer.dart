@@ -67,7 +67,7 @@ class AppDrawer extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: Colors.white.withOpacity(0.2),
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
             child: Text(
               user?.name.substring(0, 1).toUpperCase() ?? 'U',
               style: const TextStyle(
@@ -111,7 +111,7 @@ class AppDrawer extends StatelessWidget {
 
   Widget _buildDrawerItem(BuildContext context, {required IconData icon, required String label, required VoidCallback onTap}) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.primary.withOpacity(0.7)),
+      leading: Icon(icon, color: AppColors.primary.withValues(alpha: 0.7)),
       title: Text(
         label,
         style: GoogleFonts.inter(
@@ -130,7 +130,7 @@ class AppDrawer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Material(
-        color: AppColors.error.withOpacity(0.1),
+        color: AppColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () async {

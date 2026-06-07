@@ -122,8 +122,8 @@ class _MemberDashboardState extends State<MemberDashboard> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primary.withOpacity(0.4),
-                    AppColors.primary.withOpacity(0.9),
+                    AppColors.primary.withValues(alpha: 0.4),
+                    AppColors.primary.withValues(alpha: 0.9),
                   ],
                 ),
               ),
@@ -137,7 +137,7 @@ class _MemberDashboardState extends State<MemberDashboard> {
                   Text(
                     'Assalamu Alaikum,',
                     style: GoogleFonts.inter(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                       letterSpacing: 1,
                     ),
@@ -166,7 +166,7 @@ class _MemberDashboardState extends State<MemberDashboard> {
       style: GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: AppColors.primary.withOpacity(0.6),
+        color: AppColors.primary.withValues(alpha: 0.6),
         letterSpacing: 2,
       ),
     );
@@ -194,9 +194,9 @@ class _MemberDashboardState extends State<MemberDashboard> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
-                  border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+                  border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
                 ),
                 child: Icon(icon, color: color, size: 28),
               ),
@@ -256,12 +256,12 @@ class _MemberDashboardState extends State<MemberDashboard> {
               padding: const EdgeInsets.all(4),
               blur: 5,
               opacity: 0.05,
-              border: Border.all(color: Colors.black.withOpacity(0.05)),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
               child: ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.12),
+                    color: AppColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(

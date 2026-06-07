@@ -126,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withOpacity(0.98),
-                  const Color(0xFF023E23).withOpacity(0.95),
+                  AppColors.primary.withValues(alpha: 0.98),
+                  const Color(0xFF023E23).withValues(alpha: 0.95),
                   Colors.transparent,
                 ],
                 begin: Alignment.topCenter,
@@ -152,12 +152,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 40,
                         spreadRadius: 5,
                       ),
                     ],
-                    border: Border.all(color: AppColors.accent.withOpacity(0.6), width: 2),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.6), width: 2),
                   ),
                   child: ClipOval(
                     child: Image.asset(
@@ -278,9 +278,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 56,
                         width: 56,
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.fingerprint_rounded, color: AppColors.primary, size: 28),

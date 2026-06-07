@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
@@ -53,22 +53,26 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildMainBalanceCard(),
-                  const SizedBox(height: 32),
-                  _buildSectionHeader('FINANCIAL INSIGHTS'),
-                  const SizedBox(height: 16),
-                  _buildFinancialInsights(),
-                  const SizedBox(height: 32),
-                  _buildSectionHeader('QUICK ACTIONS'),
-                  const SizedBox(height: 16),
-                  _buildActionsGrid(context),
-                  const SizedBox(height: 32),
-                  _buildSectionHeader('RECENT ACTIVITY'),
-                  const SizedBox(height: 16),
-                  _buildRecentActivityList(),
-                  const SizedBox(height: 40),
-                ],
+                children: AnimateList(
+                  interval: 100.ms,
+                  effects: [FadeEffect(duration: 500.ms), SlideEffect(begin: const Offset(0, 0.1), curve: Curves.easeOutQuad)],
+                  children: [
+                    _buildMainBalanceCard(),
+                    const SizedBox(height: 32),
+                    _buildSectionHeader('FINANCIAL INSIGHTS'),
+                    const SizedBox(height: 16),
+                    _buildFinancialInsights(),
+                    const SizedBox(height: 32),
+                    _buildSectionHeader('QUICK ACTIONS'),
+                    const SizedBox(height: 16),
+                    _buildActionsGrid(context),
+                    const SizedBox(height: 32),
+                    _buildSectionHeader('RECENT ACTIVITY'),
+                    const SizedBox(height: 16),
+                    _buildRecentActivityList(),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),
@@ -91,7 +95,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
           fontSize: 14,
           fontWeight: FontWeight.bold,
           letterSpacing: 3,
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -108,8 +112,8 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primary.withOpacity(0.3),
-                    AppColors.primary.withOpacity(0.95),
+                    AppColors.primary.withValues(alpha: 0.3),
+                    AppColors.primary.withValues(alpha: 0.95),
                   ],
                 ),
               ),
@@ -123,7 +127,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
                   Text(
                     'Assalamu Alaikum,',
                     style: GoogleFonts.inter(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontSize: 14,
                       letterSpacing: 1,
                     ),
@@ -176,7 +180,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
       style: GoogleFonts.outfit(
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: AppColors.primary.withOpacity(0.6),
+        color: AppColors.primary.withValues(alpha: 0.6),
         letterSpacing: 2,
       ),
     );
@@ -187,7 +191,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
       baseColor: AppColors.primary,
       opacity: 0.9,
       padding: const EdgeInsets.all(28),
-      border: Border.all(color: Colors.white.withOpacity(0.15)),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -197,13 +201,13 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               Text(
                 'TREASURY',
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),
               ),
-              Icon(Icons.account_balance_rounded, color: AppColors.accent.withOpacity(0.5), size: 20),
+              Icon(Icons.account_balance_rounded, color: AppColors.accent.withValues(alpha: 0.5), size: 20),
             ],
           ),
           const SizedBox(height: 16),
@@ -255,7 +259,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -398,7 +402,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
     return GlassCard(
       padding: EdgeInsets.zero,
       opacity: 0.05,
-      border: Border.all(color: Colors.black.withOpacity(0.04)),
+      border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
@@ -411,7 +415,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Icon(icon, color: iconColor, size: 24),
@@ -458,7 +462,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
                   show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 1000,
-                  getDrawingHorizontalLine: (value) => FlLine(color: AppColors.textSecondary.withOpacity(0.1), strokeWidth: 1),
+                  getDrawingHorizontalLine: (value) => FlLine(color: AppColors.textSecondary.withValues(alpha: 0.1), strokeWidth: 1),
                 ),
                 titlesData: FlTitlesData(
                   show: true,
@@ -501,7 +505,7 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
                     dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppColors.primary.withOpacity(0.15),
+                      color: AppColors.primary.withValues(alpha: 0.15),
                     ),
                   ),
                 ],
@@ -537,12 +541,12 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
               child: GlassCard(
                 padding: const EdgeInsets.all(16),
                 opacity: 0.05,
-                border: Border.all(color: Colors.black.withOpacity(0.04)),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.04)),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 24,
-                      backgroundColor: AppColors.primary.withOpacity(0.1),
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                       child: Text(
                         name.isNotEmpty ? name[0] : '?', 
                         style: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold)

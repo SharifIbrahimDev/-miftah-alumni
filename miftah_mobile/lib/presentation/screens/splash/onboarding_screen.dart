@@ -93,9 +93,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             Container(
                               padding: const EdgeInsets.all(32),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.05),
+                                color: Colors.white.withValues(alpha: 0.05),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.accent.withOpacity(0.2)),
+                                border: Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
                               ),
                               child: Icon(
                                 _getIcon(data['icon']!),

@@ -77,7 +77,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                   Positioned(
                     right: -20,
                     bottom: -20,
-                    child: Icon(Icons.campaign_rounded, size: 100, color: Colors.white.withOpacity(0.1)),
+                    child: Icon(Icons.campaign_rounded, size: 100, color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(24.0),

@@ -91,9 +91,9 @@ class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderSta
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: widget.color.withOpacity(0.5), width: 1.5),
+                    border: Border.all(color: widget.color.withValues(alpha: 0.5), width: 1.5),
                   ),
                   child: Row(
                     children: [

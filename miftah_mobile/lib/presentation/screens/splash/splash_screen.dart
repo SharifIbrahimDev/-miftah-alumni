@@ -73,8 +73,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.5),
-                  AppColors.primary.withOpacity(0.8),
+                  Colors.black.withValues(alpha: 0.5),
+                  AppColors.primary.withValues(alpha: 0.8),
                 ],
               ),
             ),
@@ -84,70 +84,74 @@ class _SplashScreenState extends State<SplashScreen> {
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // App Logo
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 30,
-                        spreadRadius: 10,
+              children: AnimateList(
+                interval: 200.ms,
+                effects: [FadeEffect(duration: 800.ms), ScaleEffect(begin: const Offset(0.9, 0.9))],
+                children: [
+                  // App Logo
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 30,
+                          spreadRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/app_icon.png',
+                        width: 140,
+                        height: 140,
+                        fit: BoxFit.contain,
                       ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/app_icon.png',
-                      width: 140,
-                      height: 140,
-                      fit: BoxFit.contain,
+                    ),
+                  ).animate(onPlay: (controller) => controller.repeat(reverse: true)).scaleXY(begin: 0.98, end: 1.02, duration: 2.seconds),
+                  const SizedBox(height: 48),
+                  
+                  // App Title
+                  const Text(
+                    'Miftah Alumni Hub',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 34,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black45,
+                          offset: Offset(0, 4),
+                          blurRadius: 10,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 48),
-                
-                // App Title
-                const Text(
-                  'Miftah Alumni Hub',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black45,
-                        offset: Offset(0, 4),
-                        blurRadius: 10,
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  
+                  // Subtitle
+                  const Text(
+                    'Miftahul Ulum Al-Islamiyya',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                
-                // Subtitle
-                const Text(
-                  'Miftahul Ulum Al-Islamiyya',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                    letterSpacing: 1.5,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(height: 80),
+                  
+                  // Loading Indicator
+                  const SpinKitPulse(
+                    color: AppColors.accent,
+                    size: 50.0,
                   ),
-                ),
-                const SizedBox(height: 80),
-                
-                // Loading Indicator
-                const SpinKitPulse(
-                  color: AppColors.accent,
-                  size: 50.0,
-                ),
-              ],
-            ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.95, 0.95)),
+                ],
+              ),
+            ),
           ),
         ],
       ),

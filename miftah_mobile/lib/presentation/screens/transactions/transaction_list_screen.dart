@@ -63,13 +63,13 @@ class TransactionListScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 baseColor: tx.isCredit ? AppColors.success : AppColors.error,
                 opacity: 0.05,
-                border: Border.all(color: AppColors.surfaceVariant.withOpacity(0.5)),
+                border: Border.all(color: AppColors.surfaceVariant.withValues(alpha: 0.5)),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: (tx.isCredit ? AppColors.success : AppColors.error).withOpacity(0.1),
+                      color: (tx.isCredit ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -101,7 +101,7 @@ class TransactionListScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         DateFormat('MMM dd, yyyy').format(tx.date),
-                        style: TextStyle(fontSize: 10, color: AppColors.textSecondary.withOpacity(0.7)),
+                        style: TextStyle(fontSize: 10, color: AppColors.textSecondary.withValues(alpha: 0.7)),
                       ),
                     ],
                   ),

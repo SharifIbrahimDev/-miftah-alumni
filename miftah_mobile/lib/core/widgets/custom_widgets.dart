@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
@@ -42,7 +43,7 @@ class CustomTextField extends StatelessWidget {
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w900,
               fontSize: 10,
-              color: AppColors.textPrimary.withOpacity(0.55),
+              color: AppColors.textPrimary.withValues(alpha: 0.55),
               letterSpacing: 1.5,
             ),
           ),
@@ -60,13 +61,13 @@ class CustomTextField extends StatelessWidget {
             hintText: hint,
             prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: AppColors.primary, size: 20) : null,
             suffixIcon: suffixIcon,
-            hintStyle: GoogleFonts.inter(color: AppColors.textSecondary.withOpacity(0.4), fontSize: 15),
+            hintStyle: GoogleFonts.inter(color: AppColors.textSecondary.withValues(alpha: 0.4), fontSize: 15),
             filled: true,
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.black.withOpacity(0.06), width: 1.5),
+              borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.06), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
@@ -114,7 +115,7 @@ class CustomButton extends StatelessWidget {
           backgroundColor: color ?? AppColors.primary,
           foregroundColor: textColor ?? Colors.white,
           elevation: 4,
-          shadowColor: (color ?? AppColors.primary).withOpacity(0.4),
+          shadowColor: (color ?? AppColors.primary).withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         child: isLoading
@@ -191,14 +192,17 @@ class CustomDialogBox {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          title,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+      builder: (context) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(
+            title,
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+          ),
+          content: content,
+          actions: actions,
         ),
-        content: content,
-        actions: actions,
       ),
     );
   }

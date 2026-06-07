@@ -77,7 +77,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                           borderRadius: BorderRadius.circular(10),
                           child: LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withValues(alpha: 0.2),
                             valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accent),
                             minHeight: 12,
                           ),
@@ -147,7 +147,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: AppColors.primary.withOpacity(0.1),
+                            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                             child: Text(
                               contrib.userName[0].toUpperCase(),
                               style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),

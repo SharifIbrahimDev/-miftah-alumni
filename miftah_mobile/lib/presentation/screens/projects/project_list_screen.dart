@@ -178,7 +178,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: AppColors.surfaceVariant),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8)),
+                    BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 8)),
                   ],
                 ),
                 child: InkWell(
@@ -210,7 +210,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                           Positioned(
                             right: -20,
                             bottom: -20,
-                            child: Icon(Icons.rocket_launch_rounded, size: 120, color: Colors.white.withOpacity(0.1)),
+                            child: Icon(Icons.rocket_launch_rounded, size: 120, color: Colors.white.withValues(alpha: 0.1)),
                           ),
                           Center(
                             child: Column(

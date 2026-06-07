@@ -96,10 +96,11 @@ class AppTheme {
 
   static CardThemeData _cardTheme(Color color) => CardThemeData(
     color: color,
-    elevation: 0,
+    elevation: 4,
+    shadowColor: Colors.black.withValues(alpha: 0.05),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(24),
-      side: BorderSide(color: Colors.white.withOpacity(0.05)),
+      side: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
     ),
     margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
   );

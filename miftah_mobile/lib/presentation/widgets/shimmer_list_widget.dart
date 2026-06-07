@@ -17,7 +17,7 @@ class ShimmerListWidget extends StatelessWidget {
         return Container(
           height: 80,
           decoration: BoxDecoration(
-            color: AppColors.surfaceVariant.withOpacity(0.5),
+            color: AppColors.surfaceVariant.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -46,7 +46,7 @@ class ShimmerListWidget extends StatelessWidget {
             ],
           ),
         ).animate(onPlay: (controller) => controller.repeat())
-         .shimmer(duration: 1500.ms, color: Colors.white.withOpacity(0.2));
+         .shimmer(duration: 1500.ms, color: Colors.white.withValues(alpha: 0.2));
       },
     );
   }

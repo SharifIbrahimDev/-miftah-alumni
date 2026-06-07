@@ -142,7 +142,7 @@ class _UserListScreenState extends State<UserListScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: roleColor.withOpacity(0.1),
+                            color: roleColor.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -164,7 +164,7 @@ class _UserListScreenState extends State<UserListScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: roleColor.withOpacity(0.1),
+                                color: roleColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(

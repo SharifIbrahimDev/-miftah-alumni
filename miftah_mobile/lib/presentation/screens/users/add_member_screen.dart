@@ -176,7 +176,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_rounded : Icons.visibility_off_rounded,
-                          color: AppColors.textSecondary.withOpacity(0.5),
+                          color: AppColors.textSecondary.withValues(alpha: 0.5),
                           size: 20,
                         ),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -221,7 +221,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
           gradient: LinearGradient(
             colors: [
               AppColors.primary,
-              AppColors.primary.withOpacity(0.8),
+              AppColors.primary.withValues(alpha: 0.8),
               Colors.transparent,
             ],
             begin: Alignment.topCenter,
@@ -237,7 +237,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.accent.withOpacity(0.4), width: 1.5),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.4), width: 1.5),
                   ),
                   child: ClipOval(
                     child: Image.asset('assets/images/app_icon.png', height: 85),
@@ -265,7 +265,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       style: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w900,
-        color: AppColors.primary.withOpacity(0.55),
+        color: AppColors.primary.withValues(alpha: 0.55),
         letterSpacing: 2,
       ),
     );

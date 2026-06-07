@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
@@ -47,39 +48,43 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildStatBanner(),
-                  const SizedBox(height: 32),
-                  _buildDemographicChart(),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('REGISTRATION COMMAND'),
-                  const SizedBox(height: 16),
-                  _buildActionCard(
-                    context,
-                    'Manage Alumni List',
-                    'Database of all members',
-                    Icons.groups_rounded,
-                    AppColors.primary,
-                    () => Navigator.push(
+                children: AnimateList(
+                  interval: 100.ms,
+                  effects: [FadeEffect(duration: 500.ms), SlideEffect(begin: const Offset(0, 0.1), curve: Curves.easeOutQuad)],
+                  children: [
+                    _buildStatBanner(),
+                    const SizedBox(height: 32),
+                    _buildDemographicChart(),
+                    const SizedBox(height: 32),
+                    _buildSectionTitle('REGISTRATION COMMAND'),
+                    const SizedBox(height: 16),
+                    _buildActionCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const UserListScreen()),
+                      'Manage Alumni List',
+                      'Database of all members',
+                      Icons.groups_rounded,
+                      AppColors.primary,
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const UserListScreen()),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildActionCard(
-                    context,
-                    'New Registration',
-                    'Direct entry for new members',
-                    Icons.person_add_alt_1_rounded,
-                    AppColors.accent,
-                    () => _showNewRegistrationDialog(context),
-                  ),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('LATEST ENROLLMENTS'),
-                  const SizedBox(height: 16),
-                  _buildRecentMembers(),
-                  const SizedBox(height: 40),
-                ],
+                    const SizedBox(height: 16),
+                    _buildActionCard(
+                      context,
+                      'New Registration',
+                      'Direct entry for new members',
+                      Icons.person_add_alt_1_rounded,
+                      AppColors.accent,
+                      () => _showNewRegistrationDialog(context),
+                    ),
+                    const SizedBox(height: 32),
+                    _buildSectionTitle('LATEST ENROLLMENTS'),
+                    const SizedBox(height: 16),
+                    _buildRecentMembers(),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),
@@ -174,8 +179,8 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primary.withOpacity(0.4),
-                    AppColors.primary.withOpacity(0.95),
+                    AppColors.primary.withValues(alpha: 0.4),
+                    AppColors.primary.withValues(alpha: 0.95),
                   ],
                 ),
               ),
@@ -219,7 +224,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
       style: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w900,
-        color: AppColors.primary.withOpacity(0.5),
+        color: AppColors.primary.withValues(alpha: 0.5),
         letterSpacing: 2,
       ),
     );
@@ -307,13 +312,13 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
       baseColor: AppColors.primary,
       opacity: 0.9,
       padding: const EdgeInsets.all(32),
-      border: Border.all(color: Colors.white.withOpacity(0.15)),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
       child: Column(
         children: [
           Text(
             'TOTAL POPULATION',
             style: GoogleFonts.inter(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               fontSize: 11,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -367,7 +372,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Icon(icon, size: 28, color: color),
@@ -389,7 +394,7 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textSecondary.withOpacity(0.5)),
+              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.textSecondary.withValues(alpha: 0.5)),
             ],
           ),
         ),
@@ -420,10 +425,10 @@ class _RegistrarDashboardState extends State<RegistrarDashboard> {
             return GlassCard(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               opacity: 0.03,
-              border: Border.all(color: Colors.black.withOpacity(0.03)),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.03)),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   child: Text(
                     user.name[0].toUpperCase(), 
                     style: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold)

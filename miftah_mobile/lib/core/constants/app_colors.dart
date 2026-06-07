@@ -13,9 +13,9 @@ class AppColors {
   static const Color error = Color(0xFFD92D20);
 
   // Dark Mode
-  static const Color backgroundDark = Color(0xFF0A0E0A); // Midnight Emerald Black
-  static const Color surfaceDark = Color(0xFF141B14);      // Deep Forest Gray
+  static const Color backgroundDark = Color(0xFF000000); // True Black for OLED
+  static const Color surfaceDark = Color(0xFF0A100A);      // Deep Forest Gray
   static const Color textPrimaryDark = Color(0xFFF9FAFB);
   static const Color textSecondaryDark = Color(0xFF98A2B3);
-  static const Color surfaceVariantDark = Color(0xFF1F291F);
+  static const Color surfaceVariantDark = Color(0xFF152015);
 }

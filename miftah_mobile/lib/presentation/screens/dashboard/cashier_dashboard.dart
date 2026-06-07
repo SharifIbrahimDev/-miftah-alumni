@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../providers/auth_provider.dart';
@@ -49,18 +50,22 @@ class _CashierDashboardState extends State<CashierDashboard> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTodaySummary(),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('FINANCIAL OPERATIONS'),
-                  const SizedBox(height: 16),
-                  _buildQuickActions(context),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('PENDING COLLECTIONS'),
-                  const SizedBox(height: 16),
-                  _buildPendingDues(),
-                  const SizedBox(height: 40),
-                ],
+                children: AnimateList(
+                  interval: 100.ms,
+                  effects: [FadeEffect(duration: 500.ms), SlideEffect(begin: const Offset(0, 0.1), curve: Curves.easeOutQuad)],
+                  children: [
+                    _buildTodaySummary(),
+                    const SizedBox(height: 32),
+                    _buildSectionTitle('FINANCIAL OPERATIONS'),
+                    const SizedBox(height: 16),
+                    _buildQuickActions(context),
+                    const SizedBox(height: 32),
+                    _buildSectionTitle('PENDING COLLECTIONS'),
+                    const SizedBox(height: 16),
+                    _buildPendingDues(),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),
@@ -242,8 +247,8 @@ class _CashierDashboardState extends State<CashierDashboard> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.primary.withOpacity(0.4),
-                    AppColors.primary.withOpacity(0.95),
+                    AppColors.primary.withValues(alpha: 0.4),
+                    AppColors.primary.withValues(alpha: 0.95),
                   ],
                 ),
               ),
@@ -287,7 +292,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
       style: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w900,
-        color: AppColors.primary.withOpacity(0.5),
+        color: AppColors.primary.withValues(alpha: 0.5),
         letterSpacing: 2,
       ),
     );
@@ -361,7 +366,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
+                    color: color.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, size: 28, color: color),
@@ -399,13 +404,13 @@ class _CashierDashboardState extends State<CashierDashboard> {
           baseColor: AppColors.primary,
           opacity: 0.95,
           padding: const EdgeInsets.all(28),
-          border: Border.all(color: Colors.white.withOpacity(0.15)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
           child: Column(
             children: [
               Text(
                 'TOTAL RECORDED TODAY',
                 style: GoogleFonts.inter(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -438,7 +443,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
         ),
         Text(
           label, 
-          style: GoogleFonts.inter(color: Colors.white.withOpacity(0.5), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)
+          style: GoogleFonts.inter(color: Colors.white.withValues(alpha: 0.5), fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)
         ),
       ],
     );
@@ -472,10 +477,10 @@ class _CashierDashboardState extends State<CashierDashboard> {
             return GlassCard(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               opacity: 0.03,
-              border: Border.all(color: Colors.black.withOpacity(0.03)),
+              border: Border.all(color: Colors.black.withValues(alpha: 0.03)),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   child: Text(
                     user.name[0].toUpperCase(), 
                     style: GoogleFonts.outfit(color: AppColors.primary, fontWeight: FontWeight.bold)
@@ -505,7 +510,7 @@ class _CashierDashboardState extends State<CashierDashboard> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withOpacity(0.1),
+                      color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

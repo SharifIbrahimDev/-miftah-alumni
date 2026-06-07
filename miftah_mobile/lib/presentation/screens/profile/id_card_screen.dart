@@ -73,12 +73,12 @@ class IdCardScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
         ],
-        border: Border.all(color: AppColors.accent.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Stack(
         children: [
@@ -131,9 +131,9 @@ class IdCardScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.2),
+                    color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.accent.withOpacity(0.5)),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.5)),
                   ),
                   child: Text(
                     user?.role.toUpperCase() ?? 'MEMBER',
@@ -167,7 +167,7 @@ class IdCardScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -206,7 +206,7 @@ class IdCardScreen extends StatelessWidget {
                         const Text('AUTHORIZED SIGNATURE', style: TextStyle(fontSize: 8, color: AppColors.textSecondary, letterSpacing: 1)),
                         const SizedBox(height: 8),
                         Text('M. A. Hub', style: GoogleFonts.dancingScript(fontSize: 24, color: AppColors.primary, fontWeight: FontWeight.bold)),
-                        Container(width: 100, height: 1, color: AppColors.textSecondary.withOpacity(0.3)),
+                        Container(width: 100, height: 1, color: AppColors.textSecondary.withValues(alpha: 0.3)),
                       ],
                     ),
                     QrImageView(
