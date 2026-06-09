@@ -8,6 +8,7 @@ import '../../providers/contribution_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../../domain/entities/contribution.dart';
 import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/widgets/glass_card.dart';
 import '../../../core/utils/toast_service.dart';
 import '../../widgets/empty_state_widget.dart';
 import 'record_contribution_screen.dart';
@@ -72,7 +73,15 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                 label: const Text('New Entry', style: TextStyle(fontWeight: FontWeight.bold)),
                 icon: const Icon(Icons.add_task_rounded),
               )
-            : null,
+            : (!isAdmin
+                ? FloatingActionButton.extended(
+                    onPressed: () => _showNewClaimDialog(),
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: Colors.white,
+                    label: const Text('Claim Month', style: TextStyle(fontWeight: FontWeight.bold)),
+                    icon: const Icon(Icons.add_task_rounded),
+                  )
+                : null),
         body: Consumer<ContributionProvider>(
           builder: (context, provider, _) {
             if (provider.isLoading) {
@@ -114,13 +123,11 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                     final contribution = filteredContributions[index];
                     final isPaid = contribution.isPaid;
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.surfaceVariant),
-                      ),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: GlassCard(
+                        padding: EdgeInsets.zero,
+                        opacity: 0.05,
                       child: ListTile(
                         onTap: isPaid ? null : () => _showPaymentInfoDialog(contribution),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -165,6 +172,7 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
                           ],
                         ),
                       ),
+                      ),
                     ).animate().fadeIn(duration: 500.ms, delay: (index * 50).ms).slideX(begin: -0.1, curve: Curves.easeOutQuint);
                   },
                 ),
@@ -174,28 +182,28 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
   }
 
   Widget _buildSummaryHeader(double total) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, Color(0xFF023E23)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: GlassCard(
+        padding: const EdgeInsets.all(24),
+        baseColor: AppColors.primary,
+        opacity: 0.15,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          children: [
+            Text('TOTAL CONTRIBUTED IN $_selectedYear', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11, letterSpacing: 1)),
+            const SizedBox(height: 8),
+            Text(
+              '₦${total.toStringAsFixed(0)}',
+              style: GoogleFonts.outfit(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
-      child: Column(
-        children: [
-          Text('TOTAL CONTRIBUTED IN $_selectedYear', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11, letterSpacing: 1)),
-          const SizedBox(height: 8),
-          Text(
-            '₦${total.toStringAsFixed(0)}',
-            style: GoogleFonts.outfit(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-        ],
       ),
     );
   }
@@ -226,6 +234,140 @@ class _MonthlyContributionScreenState extends State<MonthlyContributionScreen> {
       icon: Icons.history_edu_rounded,
       title: 'No records',
       subtitle: 'No records found for this year.',
+    );
+  }
+
+  void _showNewClaimDialog() {
+    String selectedDialogYear = DateTime.now().year.toString();
+    String selectedDialogMonth = 'January';
+    final amountController = TextEditingController();
+    final months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    final years = ['2024', '2025', '2026', '2027', '2028'];
+
+    CustomDialogBox.show(
+      context: context,
+      title: 'Claim New Month',
+      content: StatefulBuilder(
+        builder: (context, setDialogState) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Select the month and year you are paying for, then submit your claim.',
+                  style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedDialogMonth,
+                        decoration: InputDecoration(
+                          labelText: 'Month',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          filled: true,
+                          fillColor: AppColors.surface,
+                        ),
+                        items: months.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+                        onChanged: (val) => setDialogState(() => selectedDialogMonth = val!),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedDialogYear,
+                        decoration: InputDecoration(
+                          labelText: 'Year',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          filled: true,
+                          fillColor: AppColors.surface,
+                        ),
+                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
+                        onChanged: (val) => setDialogState(() => selectedDialogYear = val!),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.surfaceVariant),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('BANK NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      const Text('OPAY', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
+                      const Text('ACCOUNT NUMBER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () {
+                          Clipboard.setData(const ClipboardData(text: '8061909049'));
+                          ToastService.showSuccess(context, 'Account number copied!');
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('8061909049', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 2)),
+                              const SizedBox(width: 8),
+                              Icon(Icons.copy_rounded, size: 16, color: AppColors.primary.withValues(alpha: 0.7)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text('ACCOUNT NAME', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                      const SizedBox(height: 4),
+                      const Text('ALIYU AHMAD', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                CustomTextField(
+                  controller: amountController,
+                  label: 'Amount Paid (₦)',
+                  keyboardType: TextInputType.number,
+                  prefixIcon: Icons.payments_outlined,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        SizedBox(
+          width: 150,
+          child: CustomButton(
+            text: 'Submit Claim',
+            onPressed: () async {
+              if (amountController.text.isEmpty) return;
+              final auth = context.read<AuthProvider>();
+              final success = await context.read<ContributionProvider>().submitClaim(
+                    auth.user!.id,
+                    double.parse(amountController.text),
+                    'monthly',
+                    '$selectedDialogMonth $selectedDialogYear',
+                  );
+              if (success) {
+                if (!mounted) return;
+                Navigator.pop(context);
+                ToastService.showSuccess(context, 'Claim submitted! Awaiting Cashier approval.');
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 

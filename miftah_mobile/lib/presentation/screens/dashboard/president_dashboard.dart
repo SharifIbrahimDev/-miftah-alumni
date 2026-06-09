@@ -214,7 +214,9 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
           Consumer<DashboardProvider>(
             builder: (context, dashboard, _) {
               if (dashboard.isLoading) return const Center(child: CircularProgressIndicator(color: Colors.white));
-              final balance = ((dashboard.stats?['total_collected_monthly'] ?? 0) - (dashboard.stats?['total_expenses'] ?? 0));
+              final totalCollected = double.tryParse(dashboard.stats?['total_collected_monthly']?.toString() ?? '0') ?? 0.0;
+              final totalExpenses = double.tryParse(dashboard.stats?['total_expenses']?.toString() ?? '0') ?? 0.0;
+              final balance = totalCollected - totalExpenses;
               
               return Text(
                 '₦${balance.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},")}',
@@ -238,8 +240,8 @@ class _PresidentDashboardState extends State<PresidentDashboard> {
           const SizedBox(height: 32),
           Consumer<DashboardProvider>(
             builder: (context, dashboard, _) {
-              final totalIncome = (dashboard.stats?['total_collected_monthly'] ?? 0).toDouble();
-              final totalExpense = (dashboard.stats?['total_expenses'] ?? 0).toDouble();
+              final totalIncome = double.tryParse(dashboard.stats?['total_collected_monthly']?.toString() ?? '0') ?? 0.0;
+              final totalExpense = double.tryParse(dashboard.stats?['total_expenses']?.toString() ?? '0') ?? 0.0;
               
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

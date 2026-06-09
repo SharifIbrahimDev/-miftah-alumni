@@ -29,8 +29,16 @@ class ContributionController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0',
-            'month' => 'required|string', // "2026-03"
+            'month' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('monthly_contributions')->where(function ($query) use ($request) {
+                    return $query->where('user_id', $request->user_id);
+                }),
+            ],
             'status' => 'required|in:paid,unpaid',
+        ], [
+            'month.unique' => 'A contribution for this month already exists for this member.',
         ]);
 
         $contribution = MonthlyContribution::create([

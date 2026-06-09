@@ -36,10 +36,11 @@ class ProjectRepository {
 
   Future<List<ProjectContribution>> getProjectContributions(int projectId) async {
     try {
-      final response = await remoteDataSource.get('/projects/$projectId/contributions');
+      final response = await remoteDataSource.get('/projects/$projectId');
       if (response.statusCode == 200) {
-        final List data = jsonDecode(response.body);
-        return data.map((json) => ProjectContribution.fromJson(json)).toList();
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List contributionsData = data['contributions'] ?? [];
+        return contributionsData.map((json) => ProjectContribution.fromJson(json)).toList();
       }
     } catch (e) {
       // Ignore errors for now if endpoint doesn't exist

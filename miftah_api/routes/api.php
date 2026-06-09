@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Project routes accessible by all members
     Route::get('/projects', [ProjectController::class, 'index']);
+    Route::get('/projects/{project}', [ProjectController::class, 'show']);
     Route::post('/project-contributions', [ProjectController::class, 'recordContribution']);
 
     // Self-service routes for all users

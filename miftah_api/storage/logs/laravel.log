@@ -291,3 +291,27 @@ Did you mean one of these?
 "} 
 [2026-06-05 15:33:13] testing.INFO: Password Reset OTP for test@example.com: 119767  
 [2026-06-05 15:33:49] testing.INFO: Password Reset OTP for test@example.com: 971188  
+[2026-06-07 10:49:59] local.ERROR: PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 {"exception":"[object] (Psy\\Exception\\ParseErrorException(code: 0): PHP Parse error: Syntax error, unexpected T_NS_SEPARATOR on line 1 at C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/Exception/ParseErrorException.php:44)
+[stacktrace]
+#0 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/CodeCleaner.php(657): Psy/Exception/ParseErrorException::fromParseError()
+#1 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/CodeCleaner.php(273): Psy/CodeCleaner->parse()
+#2 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/Shell.php(1358): Psy/CodeCleaner->clean()
+#3 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/Shell.php(1465): Psy/Shell->appendCode()
+#4 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/psy/psysh/src/Shell.php(2173): Psy/Shell->setCode()
+#5 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/tinker/src/Console/TinkerCommand.php(77): Psy/Shell->execute()
+#6 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Laravel/Tinker/Console/TinkerCommand->handle()
+#7 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::{closure:Illuminate/Container/BoundMethod::call():35}()
+#8 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure()
+#9 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod()
+#10 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call()
+#11 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call()
+#12 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute()
+#13 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run()
+#14 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run()
+#15 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand()
+#16 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun()
+#17 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run()
+#18 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle()
+#19 C:/Users/USER/StudioProjects/Miftah Alumni Hub/miftah_api/artisan(13): Illuminate/Foundation/Application->handleCommand()
+#20 {main}
+"} 

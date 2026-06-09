@@ -6,8 +6,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../providers/project_provider.dart';
 import '../../../domain/entities/contribution.dart';
 import '../../../core/widgets/custom_widgets.dart';
+import '../../../core/widgets/glass_card.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/shimmer_list_widget.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ProjectDetailScreen extends StatefulWidget {
   final Project project;
@@ -56,16 +58,10 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
+                  GlassCard(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primary, Color(0xFF023E23)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
+                    baseColor: AppColors.primary,
+                    opacity: 0.15,
                     child: Column(
                       children: [
                         Text(
@@ -136,18 +132,15 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final contrib = _contributions[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.surfaceVariant),
-                      ),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: GlassCard(
+                        padding: const EdgeInsets.all(16),
+                        opacity: 0.05,
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
                             child: Text(
                               contrib.userName[0].toUpperCase(),
                               style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
@@ -160,12 +153,12 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                               children: [
                                 Text(
                                   contrib.userName,
-                                  style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15),
+                                  style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   DateFormat('MMM d, yyyy - h:mm a').format(contrib.createdAt),
-                                  style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                                  style: GoogleFonts.inter(fontSize: 12, color: Colors.white70),
                                 ),
                               ],
                             ),
@@ -176,7 +169,8 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                           ),
                         ],
                       ),
-                    );
+                      ),
+                    ).animate().fadeIn(duration: 400.ms, delay: (index * 50).ms).slideX(begin: 0.05, curve: Curves.easeOutQuint);
                   },
                   childCount: _contributions.length,
                 ),

@@ -23,10 +23,10 @@ class MonthlyContribution {
 
   factory MonthlyContribution.fromJson(Map<String, dynamic> json) {
     return MonthlyContribution(
-      id: json['id'],
-      userId: json['user_id'],
-      userName: json['user']['name'],
-      amount: double.parse(json['amount'].toString()),
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      userId: int.tryParse(json['user_id']?.toString() ?? '0') ?? 0,
+      userName: json['user']?['name'] ?? 'Unknown',
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
       month: json['month'],
       status: json['status'],
       recordedByName: json['recorder']['name'],
@@ -58,13 +58,13 @@ class Project {
 
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      targetAmount: double.parse(json['target_amount'].toString()),
-      raisedAmount: double.parse(json['contributions_sum_amount']?.toString() ?? '0'),
-      createdBy: json['created_by'],
-      createdByName: json['creator']['name'],
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      targetAmount: double.tryParse(json['target_amount']?.toString() ?? '0') ?? 0.0,
+      raisedAmount: double.tryParse(json['contributions_sum_amount']?.toString() ?? '0') ?? 0.0,
+      createdBy: int.tryParse(json['created_by']?.toString() ?? '0') ?? 0,
+      createdByName: json['creator']?['name'] ?? 'Unknown',
     );
   }
 }
@@ -88,9 +88,9 @@ class Expense {
 
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
-      id: json['id'],
-      description: json['description'],
-      amount: double.parse(json['amount'].toString()),
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      description: json['description'] ?? '',
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
       type: json['type'] ?? 'debit',
       recordedByName: json['recorder']?['name'] ?? 'System',
       createdAt: DateTime.parse(json['created_at']),

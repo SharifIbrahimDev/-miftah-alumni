@@ -141,6 +141,9 @@ class _CashierDashboardState extends State<CashierDashboard> {
                     if (!mounted) return;
                     Navigator.pop(context);
                     ToastService.showSuccess(context, 'Payment recorded successfully!');
+                  } else {
+                    if (!mounted) return;
+                    ToastService.showError(context, 'Failed to record payment. Please check if this month is already paid.');
                   }
                 },
               ),
